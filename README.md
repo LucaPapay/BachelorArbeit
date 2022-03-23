@@ -9,7 +9,7 @@ install expo go app on device
 
 install node dependencys ```npm install``` in root directory
 
-install expo dependencys ```expo install react-native-screens react-native-safe-area-context```
+install expo dependencys ```expo install react-native-screens react-native-safe-area-context @react-native-async-storage/async-storage```
 
 to serve app run ```expo start``` in root directory
 
