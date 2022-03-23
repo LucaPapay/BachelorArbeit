@@ -1,24 +1,8 @@
 import { Platform, StyleSheet, Text, View, SafeAreaView, SectionList, StatusBar, Button } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-
-const DATA = [
-  {
-    title: 'Main Office',
-    data: ['Tisch', 'Sessel', 'Drucker'],
-  },
-  {
-    title: 'Branch Office',
-    data: ['Stuhl', 'Drucker', 'Sessel'],
-  },
-  {
-    title: 'Main Office',
-    data: ['Tisch', 'Sessel', 'Drucker'],
-  },
-  {
-    title: 'Branch Office',
-    data: ['Stuhl', 'Drucker', 'Sessel'],
-  },
-];
+import { useSelector, useDispatch } from 'react-redux';
+import { addToInventories } from '../redux/actions';
+import { store } from '../redux/store';
 
 const Item = ({ title }) => (
   <View style={styles.item}>
@@ -27,6 +11,12 @@ const Item = ({ title }) => (
 );
 
 export function InventoriesScreen() {
+
+  const dispatch = useDispatch();
+  //console.log(store.getState());
+  let DATA = useSelector(state => state.data);
+  //dispatch(addToInventories('test'));
+
   return (
     <View style={styles.container}>
       <SectionList
@@ -39,7 +29,7 @@ export function InventoriesScreen() {
               {title}
             </Text>
             <Ionicons
-              onPress={() => Alert.alert('Simple Button pressed')}
+              onPress={() => dispatch(addToInventories('test'))}
               name="add-circle"
               size={35}
               color="black" />
