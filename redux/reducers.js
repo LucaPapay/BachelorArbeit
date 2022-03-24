@@ -1,4 +1,4 @@
-import { ADD_TO_INVENTORIES } from "./types";
+import { ADD_CATEGORY_TO_INVENTORIES, ADD_TO_INVENTORIES, INIT } from "./types";
 
 
 const initalState = {
@@ -22,12 +22,12 @@ const initalState = {
     ],
 }
 
-function changeState(state) {
+function setInitial(state) {
     return {
         ...state,
         data: [
             {
-                title: 'Das macht mich so happy',
+                title: 'Das macht mich',
                 data: ['a', 'b', 'c'],
             },
             {
@@ -46,10 +46,39 @@ function changeState(state) {
     }
 }
 
+function addNewCategory(state, action) {
+    return {
+        ...state,
+        data: [...state.data, {
+            title: action.newEntry, data: []
+        }
+        ]
+    }
+}
+
+function addNewEntryToCategory(state, action) {
+    return {
+        ...state,
+        data: state.data.map((item) => {
+            if (item.title != action.title) {
+                return item
+            }
+            return {
+                ...item,
+                data: item.data.concat(action.newEntry)
+            }
+        })
+    }
+}
+
 function reducer(state = initalState, action) {
     switch (action.type) {
+        case INIT:
+            return setInitial(state);
+        case ADD_CATEGORY_TO_INVENTORIES:
+            return addNewCategory(state, action);
         case ADD_TO_INVENTORIES:
-            return changeState(state);
+            return addNewEntryToCategory(state, action);
         default:
             return state;
     }

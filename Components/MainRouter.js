@@ -4,11 +4,16 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { HomeScreen } from '../Screens/HomeScreen';
 import { SettingsScreen } from '../Screens/SettingsScreen';
 import { InventoriesScreen } from '../Screens/InventoriesScreen';
-
+import { View, Text, StyleSheet } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { addCategoryToInventories } from '../redux/actions';
 
 const Tab = createBottomTabNavigator();
 
 export function MainRouter() {
+
+    const dispatch = useDispatch();
+
     return (
         <NavigationContainer>
             <Tab.Navigator screenOptions={({ route }) => ({
@@ -16,18 +21,26 @@ export function MainRouter() {
                 tabBarActiveTintColor: 'tomato',
                 tabBarInactiveTintColor: 'gray',
             })}>
-                <Tab.Screen name="Home" component={HomeScreen} />
-                <Tab.Screen name="Inventories" component={InventoriesScreen} />
+                <Tab.Screen name={"Home"} component={HomeScreen} />
+                <Tab.Screen name="Inventories" options={{
+                    headerTitle: () =>
+                        <View style={styles.header}>
+                            <Text style={styles.headerFont}>
+                                Home
+                            </Text>
+                            <Ionicons
+                                onPress={() => dispatch(addCategoryToInventories('newEntry'))}
+                                name="add-circle"
+                                size={35}
+                                color="black" />
+                        </View>
+                }} component={InventoriesScreen} />
                 <Tab.Screen name="Settings" component={SettingsScreen} />
             </Tab.Navigator>
         </NavigationContainer>
 
     );
 }
-
-
-
-
 function getTabIcons(route, focused, color, size) {
     let iconName;
 
@@ -43,3 +56,19 @@ function getTabIcons(route, focused, color, size) {
 
     return <Ionicons name={iconName} size={size} color={color} />;
 }
+
+const styles = StyleSheet.create({
+    headerFont: {
+        fontSize: 20,
+        fontWeight: '600',
+    },
+    header: {
+        flex: 3,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    title: {
+        fontSize: 24,
+    },
+});

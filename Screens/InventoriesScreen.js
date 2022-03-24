@@ -1,8 +1,7 @@
 import { Platform, StyleSheet, Text, View, SafeAreaView, SectionList, StatusBar, Button } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSelector, useDispatch } from 'react-redux';
-import { addToInventories } from '../redux/actions';
-import { store } from '../redux/store';
+import { addEntryToCategory } from '../redux/actions';
 
 const Item = ({ title }) => (
   <View style={styles.item}>
@@ -13,9 +12,7 @@ const Item = ({ title }) => (
 export function InventoriesScreen() {
 
   const dispatch = useDispatch();
-  //console.log(store.getState());
   let DATA = useSelector(state => state.data);
-  //dispatch(addToInventories('test'));
 
   return (
     <View style={styles.container}>
@@ -29,7 +26,7 @@ export function InventoriesScreen() {
               {title}
             </Text>
             <Ionicons
-              onPress={() => dispatch(addToInventories('test'))}
+              onPress={() => dispatch(addEntryToCategory(title, 'newEntry'))}
               name="add-circle"
               size={35}
               color="black" />
