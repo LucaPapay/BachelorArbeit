@@ -12,24 +12,8 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig, reducer)
 
 let initalState = {
-    data: [
-        {
-            title: 'Main Office',
-            data: ['Tisch', 'Sessel', 'Drucker'],
-        },
-        {
-            title: 'Branch Office',
-            data: ['Stuhl', 'Drucker', 'Sessel'],
-        },
-        {
-            title: 'Main Office',
-            data: ['Tisch', 'Sessel', 'Drucker'],
-        },
-        {
-            title: 'Branch Office',
-            data: ['Stuhl', 'Drucker', 'Sessel'],
-        },
-    ],
+    data: [],
+    idCounter: 1,
 };
 
 

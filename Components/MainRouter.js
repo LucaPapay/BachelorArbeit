@@ -2,17 +2,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { HomeScreen } from '../Screens/HomeScreen';
-import { SettingsScreen } from '../Screens/SettingsScreen';
-import { InventoriesScreen } from '../Screens/InventoriesScreen';
+import { DebugScreen } from '../Screens/DebugScreen';
+import { InventoriesWrapper } from '../Screens/InventoriesWrapper';
 import { View, Text, StyleSheet } from 'react-native';
-import { useDispatch } from 'react-redux';
-import { addCategoryToInventories } from '../redux/actions';
 
 const Tab = createBottomTabNavigator();
 
 export function MainRouter() {
-
-    const dispatch = useDispatch();
 
     return (
         <NavigationContainer>
@@ -22,25 +18,13 @@ export function MainRouter() {
                 tabBarInactiveTintColor: 'gray',
             })}>
                 <Tab.Screen name={"Home"} component={HomeScreen} />
-                <Tab.Screen name="Inventories" options={{
-                    headerTitle: () =>
-                        <View style={styles.header}>
-                            <Text style={styles.headerFont}>
-                                Home
-                            </Text>
-                            <Ionicons
-                                onPress={() => dispatch(addCategoryToInventories('newEntry'))}
-                                name="add-circle"
-                                size={35}
-                                color="black" />
-                        </View>
-                }} component={InventoriesScreen} />
-                <Tab.Screen name="Settings" component={SettingsScreen} />
+                <Tab.Screen name={"Inventories"} component={InventoriesWrapper} options={{ headerShown: false }} />
+                <Tab.Screen name="Debug" component={DebugScreen} />
             </Tab.Navigator>
         </NavigationContainer>
-
     );
 }
+
 function getTabIcons(route, focused, color, size) {
     let iconName;
 
@@ -50,7 +34,7 @@ function getTabIcons(route, focused, color, size) {
             : 'ios-information-circle-outline';
     } else if (route.name === 'Inventories') {
         iconName = focused ? 'file-tray-stacked' : 'file-tray-stacked-outline';
-    } else if (route.name === 'Settings') {
+    } else if (route.name === 'Debug') {
         iconName = focused ? 'settings' : 'settings-outline';
     }
 

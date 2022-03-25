@@ -1,32 +1,34 @@
-import { Platform, StyleSheet, Text, View, SafeAreaView, SectionList, StatusBar, Button } from 'react-native';
+import { Platform, StyleSheet, Text, View, SectionList, StatusBar, Button } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSelector, useDispatch } from 'react-redux';
 import { addEntryToCategory } from '../redux/actions';
 
-const Item = ({ title }) => (
+const Item = ({ title, key }) => (
   <View style={styles.item}>
-    <Text style={styles.title}>{title}</Text>
+    <Text key={key} style={styles.title}>{title}</Text>
   </View>
 );
 
-export function InventoriesScreen() {
+export function InventoriesScreen({ navigation }) {
 
   const dispatch = useDispatch();
   let DATA = useSelector(state => state.data);
+  JSON.stringify(DATA, null, "  ");
 
   return (
     <View style={styles.container}>
+      <Button title='add Category' onPress={() => navigation.navigate('New Category')}></Button>
       <SectionList
         sections={DATA}
         keyExtractor={(item, index) => item + index}
-        renderItem={({ item }) => <Item title={item} />}
-        renderSectionHeader={({ section: { title } }) =>
+        renderItem={({ item, index, section }) => <Item title={item.childrenCategories.name} key={index} />}
+        renderSectionHeader={({ section: { name, id } }) =>
           <View style={styles.header}>
             <Text style={styles.headerFont}>
-              {title}
+              {name}
             </Text>
             <Ionicons
-              onPress={() => dispatch(addEntryToCategory(title, 'newEntry'))}
+              onPress={() => dispatch(addEntryToCategory(id, 'newEntry'))}
               name="add-circle"
               size={35}
               color="black" />

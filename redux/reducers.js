@@ -1,58 +1,33 @@
-import { ADD_CATEGORY_TO_INVENTORIES, ADD_TO_INVENTORIES, INIT } from "./types";
+import { ADD_CATEGORY_TO_INVENTORIES, ADD_TO_INVENTORIES, INIT, NEXT_ID } from "./types";
+import { InventoryCategory, InventoryEntry } from "../Entities/DataStorage";
 
 
 const initalState = {
-    data: [
-        {
-            title: 'Main Office',
-            data: ['Tisch', 'Sessel', 'Drucker'],
-        },
-        {
-            title: 'Branch Office',
-            data: ['Stuhl', 'Drucker', 'Sessel'],
-        },
-        {
-            title: 'Main Office',
-            data: ['Tisch', 'Sessel', 'Drucker'],
-        },
-        {
-            title: 'Branch Office',
-            data: ['Stuhl', 'Drucker', 'Sessel'],
-        },
-    ],
+    data: [],
+    idCounter: 1,
 }
 
 function setInitial(state) {
     return {
         ...state,
-        data: [
-            {
-                title: 'Das macht mich',
-                data: ['a', 'b', 'c'],
-            },
-            {
-                title: 'Branch Office',
-                data: ['Stuhl', 'Drucker', 'Sessel'],
-            },
-            {
-                title: 'Main Office',
-                data: ['Tisch', 'Sessel', 'Drucker'],
-            },
-            {
-                title: 'Branch Office',
-                data: ['Stuhl', 'Drucker', 'Sessel'],
-            },
-        ],
+        data: [],
+        idCounter: 1,
+    }
+}
+
+function nextId(state) {
+    return {
+        ...state,
+        idCounter: state.idCounter + 1
     }
 }
 
 function addNewCategory(state, action) {
+    let newCategory = new InventoryCategory(action.newEntry, action.id, 0);
+    console.log(newCategory);
     return {
         ...state,
-        data: [...state.data, {
-            title: action.newEntry, data: []
-        }
-        ]
+        data: [...state.data, newCategory]
     }
 }
 
@@ -79,6 +54,8 @@ function reducer(state = initalState, action) {
             return addNewCategory(state, action);
         case ADD_TO_INVENTORIES:
             return addNewEntryToCategory(state, action);
+        case NEXT_ID:
+            return nextId(state);
         default:
             return state;
     }
