@@ -2,13 +2,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { HomeScreen } from '../Screens/HomeScreen';
-import { SettingsScreen } from '../Screens/SettingsScreen';
-import { InventoriesScreen } from '../Screens/InventoriesScreen';
-
+import { DebugScreen } from '../Screens/DebugScreen';
+import { InventoriesWrapper } from '../Screens/InventoriesWrapper';
+import { View, Text, StyleSheet } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
 export function MainRouter() {
+
     return (
         <NavigationContainer>
             <Tab.Navigator screenOptions={({ route }) => ({
@@ -16,17 +17,13 @@ export function MainRouter() {
                 tabBarActiveTintColor: 'tomato',
                 tabBarInactiveTintColor: 'gray',
             })}>
-                <Tab.Screen name="Home" component={HomeScreen} />
-                <Tab.Screen name="Inventories" component={InventoriesScreen} />
-                <Tab.Screen name="Settings" component={SettingsScreen} />
+                <Tab.Screen name={"Home"} component={HomeScreen} />
+                <Tab.Screen name={"Inventories"} component={InventoriesWrapper} options={{ headerShown: false }} />
+                <Tab.Screen name="Debug" component={DebugScreen} />
             </Tab.Navigator>
         </NavigationContainer>
-
     );
 }
-
-
-
 
 function getTabIcons(route, focused, color, size) {
     let iconName;
@@ -37,9 +34,25 @@ function getTabIcons(route, focused, color, size) {
             : 'ios-information-circle-outline';
     } else if (route.name === 'Inventories') {
         iconName = focused ? 'file-tray-stacked' : 'file-tray-stacked-outline';
-    } else if (route.name === 'Settings') {
+    } else if (route.name === 'Debug') {
         iconName = focused ? 'settings' : 'settings-outline';
     }
 
     return <Ionicons name={iconName} size={size} color={color} />;
 }
+
+const styles = StyleSheet.create({
+    headerFont: {
+        fontSize: 20,
+        fontWeight: '600',
+    },
+    header: {
+        flex: 3,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    title: {
+        fontSize: 24,
+    },
+});
