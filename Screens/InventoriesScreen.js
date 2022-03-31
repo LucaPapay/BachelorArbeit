@@ -1,39 +1,46 @@
-import { Platform, StyleSheet, Text, View, SectionList, StatusBar, Button } from 'react-native';
+import { Platform, StyleSheet, Text, View, StatusBar, FlatList } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useSelector, useDispatch } from 'react-redux';
-import { addEntryToCategory } from '../redux/actions';
+import { useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import Button from '../Components/Button';
 
-const Item = ({ title, key }) => (
-  <View style={styles.item}>
-    <Text key={key} style={styles.title}>{title}</Text>
-  </View>
-);
+function Item({ entry }) {
+  const navigation = useNavigation();
+  return (
+    <View style={styles.item}>
+      <View
+        style={{ flex: 8 }}
+      >
+        <Text onPress={() => navigation.navigate('Sub Inventory', { parentIds: [entry.id], name: entry.name })} style={styles.title}>{entry.name}</Text>
+      </View>
+      <Ionicons
+        onPress={() => navigation.navigate('New Entry', { parentId: entry.id })}
+        name="add-circle"
+        style={{ flex: 1 }}
+        size={35}
+        color="#14213d" />
+    </View>
+  );
+}
+
+const renderItem = ({ item }) => {
+  return (
+    <Item
+      entry={item}
+    />
+  );
+};
 
 export function InventoriesScreen({ navigation }) {
-
-  const dispatch = useDispatch();
   let DATA = useSelector(state => state.data);
-  JSON.stringify(DATA, null, "  ");
 
   return (
     <View style={styles.container}>
       <Button title='add Category' onPress={() => navigation.navigate('New Category')}></Button>
-      <SectionList
-        sections={DATA}
-        keyExtractor={(item, index) => item + index}
-        renderItem={({ item, index, section }) => <Item title={item.childrenCategories.name} key={index} />}
-        renderSectionHeader={({ section: { name, id } }) =>
-          <View style={styles.header}>
-            <Text style={styles.headerFont}>
-              {name}
-            </Text>
-            <Ionicons
-              onPress={() => dispatch(addEntryToCategory(id, 'newEntry'))}
-              name="add-circle"
-              size={35}
-              color="black" />
-          </View>
-        }
+      <FlatList
+        data={DATA}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
       />
     </View>
   );
@@ -46,21 +53,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   item: {
-    backgroundColor: '#f9c2ff',
+    backgroundColor: '#e5e5e5',
     padding: 20,
     marginVertical: 8,
-  },
-  headerFont: {
-    fontSize: 32,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#efefef',
-    paddingBottom: Platform.OS === 'ios' ? StatusBar.currentHeight + 5 : 5,
+    flex: 1,
+    flexDirection: "row",
+    borderRadius: 5
   },
   title: {
     fontSize: 24,
+    color: '#14213d'
   },
 });

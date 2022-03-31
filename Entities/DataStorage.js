@@ -1,10 +1,10 @@
 class InventoryCategory {
-    constructor(name, id, parentid) {
+    constructor(name, id, parentids) {
         this.id = id;
         this.name = name;
-        this.childrenCategoriesElements = [];
+        this.subCategories = [];
         this.data = [];
-        this.parentid = parentid;
+        this.parentIds = parentids;
     }
 }
 
