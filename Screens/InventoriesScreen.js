@@ -14,7 +14,6 @@ function Item({ entry }) {
         <Text onPress={() => navigation.navigate('Sub Inventory', { parentIds: [entry.id], name: entry.name })} style={styles.title}>{entry.name}</Text>
       </View>
       <Ionicons
-        onPress={() => navigation.navigate('New Entry', { parentId: entry.id })}
         name="eye"
         style={{ flex: 1 }}
         size={35}
