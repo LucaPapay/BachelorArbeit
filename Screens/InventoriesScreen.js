@@ -15,7 +15,7 @@ function Item({ entry }) {
       </View>
       <Ionicons
         onPress={() => navigation.navigate('New Entry', { parentId: entry.id })}
-        name="add-circle"
+        name="eye"
         style={{ flex: 1 }}
         size={35}
         color="#14213d" />

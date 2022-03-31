@@ -5,7 +5,7 @@ import { addEntryToCategory, addCategoryToInventories, nextId } from '../redux/a
 
 
 export function NewEntry({ route, navigation }) {
-  const { parentId } = route.params;
+  const { parentIds } = route.params;
   const [text, onChangeText] = React.useState('');
 
   const dispatch = useDispatch();
@@ -15,14 +15,14 @@ export function NewEntry({ route, navigation }) {
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text>New Entry Or New Sub Category</Text>
       <TextInput style={styles.input} onChangeText={onChangeText} value={text} placeholder="Name" />
-      <Button title="SAVE Entry" onPress={() => addNewEntryToCategory(dispatch, nextID, text, navigation, parentId)}></Button>
+      <Button title="SAVE Entry" onPress={() => addNewEntryToCategory(dispatch, nextID, text, navigation, parentIds)}></Button>
     </View>
   );
 }
 
-function addNewEntryToCategory(dispatch, nextID, text, navigation, parentId) {
+function addNewEntryToCategory(dispatch, nextID, text, navigation, parentIds) {
   dispatch(nextId())
-  dispatch(addEntryToCategory(nextID, text, parentId))
+  dispatch(addEntryToCategory(nextID, text, parentIds))
   navigation.goBack()
 }
 

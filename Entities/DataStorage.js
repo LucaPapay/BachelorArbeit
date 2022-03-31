@@ -1,17 +1,18 @@
 class InventoryCategory {
-    constructor(name, id, parentids) {
+    constructor(name, id, parentIds) {
         this.id = id;
         this.name = name;
         this.subCategories = [];
         this.data = [];
-        this.parentIds = parentids;
+        this.parentIds = parentIds;
     }
 }
 
 class InventoryEntry {
-    constructor(name, id) {
+    constructor(name, id, parentIds) {
         this.id = id;
         this.name = name;
+        this.parentIds = parentIds;
     }
 }
 

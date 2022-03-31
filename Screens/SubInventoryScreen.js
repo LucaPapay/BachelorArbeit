@@ -15,7 +15,7 @@ function Item({ entry }) {
       </View>
       <Ionicons
         onPress={() => navigation.navigate('New Entry', { parentId: id })}
-        name="add-circle"
+        name="eye"
         style={{ flex: 1 }}
         size={35}
         color="#14213d" />
@@ -42,8 +42,15 @@ export function SubInventoryScreen({ route, navigation }) {
         <Button title='add Entry' onPress={() => navigation.navigate('New Entry', { parentIds: parentIds, name: DATA.name })}></Button>
         <Button title='add SubCategory' onPress={() => navigation.navigate('New SubCategory', { parentIds: parentIds, name: DATA.name })}></Button>
       </View>
+      <Text style={styles.title} >Sub Categories</Text>
       <FlatList
         data={DATA.subCategories}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+      />
+      <Text style={styles.title}>Entrys</Text>
+      <FlatList
+        data={DATA.data}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />

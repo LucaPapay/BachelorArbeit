@@ -31,23 +31,7 @@ function addNewCategory(state, action) {
     }
 }
 
-function addNewEntryToCategory(state, action) {
-    let newEntry = new InventoryEntry(action.newEntry, action.id);
-    return {
-        ...state,
-        data: state.data.map((item) => {
-            if (item.id != action.parentId) {
-                return item
-            }
-            return {
-                ...item,
-                data: item.data.concat(newEntry)
-            }
-        })
-    }
-}
-
-const recursiveUpdate = (
+const recursiveAddInventoryEntry = (
     subCategories,
     parentIds,
     id,
@@ -57,10 +41,10 @@ const recursiveUpdate = (
     const recur = (subCategories, parentIds, id, newName, parentIdsCopy) => {
         //found parent
         if (parentIds.length === 1) {
-            let x = new InventoryCategory(newName, id, parentIdsCopy);
+            let newInventoryEntry = new InventoryEntry(newName, id, parentIdsCopy);
             return subCategories.map((element) =>
                 element.id === parentIds[0]
-                    ? { ...element, subCategories: element.subCategories.concat(x) }
+                    ? { ...element, data: element.data.concat(newInventoryEntry) }
                     : element
             );
         }
@@ -70,7 +54,74 @@ const recursiveUpdate = (
             element.id === currentParent
                 ? {
                     ...element,
-                    subCategories: recursiveUpdate(
+                    subCategories: recursiveAddInventoryEntry(
+                        element.subCategories,
+                        parentIds.slice(1),
+                        id,
+                        newName,
+                        parentIdsCopy
+                    ),
+                }
+                : element
+        );
+    };
+    return recur(subCategories, parentIds, id, newName, parentIdsCopy);
+};
+
+function addNewEntryToCategory(state, action) {
+    let parentIds = action.parentIds;
+    if (parentIds.length === 1) {
+        let newEntry = new InventoryEntry(action.newEntry, action.id, action.parentIds);
+        return {
+            ...state,
+            data: state.data.map((item) => {
+                if (item.id != parentIds[0]) {
+                    return item
+                }
+                return {
+                    ...item,
+                    data: item.data.concat(newEntry)
+                }
+            })
+        }
+    } else {
+        return {
+            ...state,
+            data: recursiveAddInventoryEntry(
+                state.data,
+                parentIds,
+                action.id,
+                action.newEntry,
+                parentIds
+            ),
+        };
+    }
+}
+
+const recursiveAddSubCategory = (
+    subCategories,
+    parentIds,
+    id,
+    newName,
+    parentIdsCopy,
+) => {
+    const recur = (subCategories, parentIds, id, newName, parentIdsCopy) => {
+        //found parent
+        if (parentIds.length === 1) {
+            let newSubCategory = new InventoryCategory(newName, id, parentIdsCopy);
+            return subCategories.map((element) =>
+                element.id === parentIds[0]
+                    ? { ...element, subCategories: element.subCategories.concat(newSubCategory) }
+                    : element
+            );
+        }
+        const currentParent = parentIds[0];
+        //recursively traverse n-tree
+        return subCategories.map((element) =>
+            element.id === currentParent
+                ? {
+                    ...element,
+                    subCategories: recursiveAddSubCategory(
                         element.subCategories,
                         parentIds.slice(1),
                         id,
@@ -87,7 +138,7 @@ const recursiveUpdate = (
 function addSubCategory(state, action) {
     let parentIds = action.parentIds;
     if (parentIds.length === 1) {
-        let newEntry = new InventoryCategory(action.newEntry, action.id, action.parentIds);
+        let newSubCategory = new InventoryCategory(action.newEntry, action.id, action.parentIds);
         return {
             ...state,
             data: state.data.map((item) => {
@@ -96,14 +147,14 @@ function addSubCategory(state, action) {
                 }
                 return {
                     ...item,
-                    subCategories: item.subCategories.concat(newEntry)
+                    subCategories: item.subCategories.concat(newSubCategory)
                 }
             })
         }
     } else {
         return {
             ...state,
-            data: recursiveUpdate(
+            data: recursiveAddSubCategory(
                 state.data,
                 parentIds,
                 action.id,
