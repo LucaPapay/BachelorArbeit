@@ -8,7 +8,10 @@ export function InventoriesScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Button title="add Category" onPress={() => navigation.navigate("New Category")}></Button>
+      <View style={styles.btnContainer}>
+        <Button title="add Category" onPress={() => navigation.navigate("New Category")}></Button>
+        <Button title="Scanner Test" onPress={() => navigation.navigate("Scanner")}></Button>
+      </View>
       <FlatList data={DATA} renderItem={renderItem} keyExtractor={(item) => item.id} />
     </View>
   );
@@ -23,5 +26,10 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "ios" ? StatusBar.currentHeight + 10 : 10,
     marginHorizontal: 16,
+  },
+  btnContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingBottom: 5,
   },
 });
