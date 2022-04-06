@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, View, TextInput, StyleSheet, Button } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { addEntryToCategory, addCategoryToInventories, nextId } from "../redux/actions";
+import { addEntryToCategory, nextId } from "../redux/actions";
 
 export function NewEntry({ route, navigation }) {
   const { parentIds } = route.params;
