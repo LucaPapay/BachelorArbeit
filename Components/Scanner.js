@@ -30,7 +30,6 @@ export default function Scanner({ navigation }) {
           onBarCodeScanned={(...args) => {
             const data = args[0].data;
             result = JSON.stringify(data);
-            console.log(result);
             navigation.navigate("Scanner Result", { scannedResult: result });
           }}
           barCodeScannerSettings={{
@@ -49,20 +48,5 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
-  },
-  buttonContainer: {
-    flex: 1,
-    backgroundColor: "transparent",
-    flexDirection: "row",
-    margin: 20,
-  },
-  button: {
-    flex: 0.1,
-    alignSelf: "flex-end",
-    alignItems: "center",
-  },
-  text: {
-    fontSize: 18,
-    color: "white",
   },
 });
