@@ -29,11 +29,17 @@ export default function Scanner({ navigation }) {
         <Camera
           onBarCodeScanned={(...args) => {
             const data = args[0].data;
+            const type = args[0].type;
             result = JSON.stringify(data);
-            navigation.navigate("Scanner Result", { scannedResult: result });
+            typeString = JSON.stringify(type);
+            navigation.navigate("Scanner Result", { scannedResult: result, type: typeString });
           }}
           barCodeScannerSettings={{
-            barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
+            barCodeTypes: [
+              BarCodeScanner.Constants.BarCodeType.qr,
+              BarCodeScanner.Constants.BarCodeType.ean8,
+              BarCodeScanner.Constants.BarCodeType.ean13,
+            ],
           }}
           style={{ flex: 2 }}
         />
