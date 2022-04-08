@@ -31,15 +31,14 @@ export function SubInventoryScreen({ route, navigation }) {
           }
         ></Button>
       </View>
-      <Text style={styles.title}>Sub Categories</Text>
-      <FlatList
-        style={{ flex: 2 }}
-        data={DATA.subCategories}
-        renderItem={renderSubCategoryItem}
-        keyExtractor={(item) => item.id}
-      />
-      <Text style={styles.title}>Entrys</Text>
-      <FlatList style={{ flex: 2 }} data={DATA.data} renderItem={renderEntryItem} keyExtractor={(item) => item.id} />
+      <View style={{ flex: 2 }}>
+        <Text style={styles.title}>Sub Categories</Text>
+        <FlatList data={DATA.subCategories} renderItem={renderSubCategoryItem} keyExtractor={(item) => item.id} />
+      </View>
+      <View style={{ flex: 3 }}>
+        <Text style={styles.title}>Entrys</Text>
+        <FlatList data={DATA.data} renderItem={renderEntryItem} keyExtractor={(item) => item.id} />
+      </View>
     </View>
   );
 }
