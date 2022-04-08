@@ -10,7 +10,7 @@ export default function App() {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <MainRouter></MainRouter>
-        <StatusBar style="auto" backgroundColor="tomato" />
+        <StatusBar style="auto" backgroundColor="#14213d" />
       </PersistGate>
     </Provider>
   );
