@@ -1,6 +1,7 @@
 import { Platform, StyleSheet, Text, View, StatusBar, FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import Button from "../Components/Button";
+import EntryListEntry from "../Components/EntryListEntry";
 import SubCategoryListEntry from "../Components/SubCategoryListEntry";
 
 export function SubInventoryScreen({ route, navigation }) {
@@ -31,15 +32,24 @@ export function SubInventoryScreen({ route, navigation }) {
         ></Button>
       </View>
       <Text style={styles.title}>Sub Categories</Text>
-      <FlatList data={DATA.subCategories} renderItem={renderItem} keyExtractor={(item) => item.id} />
+      <FlatList
+        style={{ flex: 2 }}
+        data={DATA.subCategories}
+        renderItem={renderSubCategoryItem}
+        keyExtractor={(item) => item.id}
+      />
       <Text style={styles.title}>Entrys</Text>
-      <FlatList data={DATA.data} renderItem={renderItem} keyExtractor={(item) => item.id} />
+      <FlatList style={{ flex: 2 }} data={DATA.data} renderItem={renderEntryItem} keyExtractor={(item) => item.id} />
     </View>
   );
 }
 
-const renderItem = ({ item }) => {
+const renderSubCategoryItem = ({ item }) => {
   return <SubCategoryListEntry entry={item} parentIds={item.parentIds.concat(item.id)} />;
+};
+
+const renderEntryItem = ({ item }) => {
+  return <EntryListEntry entry={item} parentIds={item.parentIds.concat(item.id)} />;
 };
 
 function getCorrectSubCategory(parentIds) {

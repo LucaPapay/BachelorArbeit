@@ -14,7 +14,7 @@ export function MainRouter() {
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => getTabIcons(route, focused, color, size),
-          tabBarActiveTintColor: "tomato",
+          tabBarActiveTintColor: "#14213d",
           tabBarInactiveTintColor: "gray",
         })}
       >
