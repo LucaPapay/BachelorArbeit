@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Text, View, TextInput, StyleSheet, FlatList, Modal } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { addEntryToCategory, nextId } from "../redux/actions";
+import { addEntryToItemGroup, nextId } from "../redux/actions";
 import { Parameter } from "../Entities/DataStorage";
 import Button from "../Components/Button";
 import { Picker } from "@react-native-picker/picker";
@@ -102,7 +102,7 @@ export function NewEntry({ route, navigation }) {
         />
       </View>
       <View style={styles.btnWrapper}>
-        <Button color="green" title="Save" onPress={() => addNewEntryToCategory(name)}></Button>
+        <Button color="green" title="Save" onPress={() => addNewEntryToItemGroup(name)}></Button>
       </View>
       <View style={styles.btnWrapper}>
         <Button title="+ Amount" onPress={() => addParameter("Amount", "number")}></Button>
@@ -120,9 +120,9 @@ export function NewEntry({ route, navigation }) {
     setParameters((parameters) => [...parameters, newParameter]);
   }
 
-  function addNewEntryToCategory(name) {
+  function addNewEntryToItemGroup(name) {
     dispatch(nextId());
-    dispatch(addEntryToCategory(nextID, name, parentIds, parameters));
+    dispatch(addEntryToItemGroup(nextID, name, parentIds, parameters));
     navigation.goBack();
   }
 

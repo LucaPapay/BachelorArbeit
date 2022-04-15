@@ -3,8 +3,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { HomeScreen } from "../Screens/HomeScreen";
 import { DebugScreen } from "../Screens/DebugScreen";
-import { InventoriesWrapper } from "../Screens/InventoriesWrapper";
-import { View, Text, StyleSheet } from "react-native";
+import { ItemGroupsWrapper } from "../Screens/ItemGroupsWrapper";
+import { StyleSheet } from "react-native";
 
 const Tab = createBottomTabNavigator();
 
@@ -19,7 +19,7 @@ export function MainRouter() {
         })}
       >
         <Tab.Screen name={"Home"} component={HomeScreen} />
-        <Tab.Screen name={"Inventories"} component={InventoriesWrapper} options={{ headerShown: false }} />
+        <Tab.Screen name={"Item Groups"} component={ItemGroupsWrapper} options={{ headerShown: false }} />
         <Tab.Screen name="Debug" component={DebugScreen} />
       </Tab.Navigator>
     </NavigationContainer>
@@ -31,7 +31,7 @@ function getTabIcons(route, focused, color, size) {
 
   if (route.name === "Home") {
     iconName = focused ? "ios-information-circle" : "ios-information-circle-outline";
-  } else if (route.name === "Inventories") {
+  } else if (route.name === "Item Groups") {
     iconName = focused ? "file-tray-stacked" : "file-tray-stacked-outline";
   } else if (route.name === "Debug") {
     iconName = focused ? "settings" : "settings-outline";

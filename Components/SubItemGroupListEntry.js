@@ -2,13 +2,13 @@ import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { StyleSheet, Text, View } from "react-native";
 
-export default function SubCategory({ entry, parentIds }) {
+export default function SubItemGroup({ entry, parentIds }) {
   const navigation = useNavigation();
   return (
     <View style={styles.item}>
       <View style={{ flex: 3 }}>
         <Text
-          onPress={() => navigation.push("Sub Inventory", { parentIds: parentIds, name: entry.name })}
+          onPress={() => navigation.push("Sub Item Group", { parentIds: parentIds, name: entry.name })}
           style={styles.title}
         >
           {entry.name}
