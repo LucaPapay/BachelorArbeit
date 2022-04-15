@@ -7,6 +7,7 @@ import { SubInventoryScreen } from "./SubInventoryScreen";
 import { NewSubCategory } from "../Forms/NewSubCategory";
 import Scanner from "../Components/Scanner";
 import ScannerResult from "../Components/ScannerResult";
+import { EntryCodeView } from "../Components/EntryCodeView";
 
 export function InventoriesWrapper() {
   const Stack = createStackNavigator();
@@ -21,6 +22,7 @@ export function InventoriesWrapper() {
         />
         <Stack.Screen name="New Category" component={NewCategory} />
         <Stack.Screen name="New SubCategory" component={NewSubCategory} />
+        <Stack.Screen name="QR Code" component={EntryCodeView} />
         <Stack.Screen name="New Entry" component={NewEntry} />
         <Stack.Screen name="Scanner" component={Scanner} />
         <Stack.Screen name="Scanner Result" component={ScannerResult} />

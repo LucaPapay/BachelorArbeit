@@ -6,7 +6,7 @@ export default function SubCategory({ entry, parentIds }) {
   const navigation = useNavigation();
   return (
     <View style={styles.item}>
-      <View style={{ flex: 8 }}>
+      <View style={{ flex: 3 }}>
         <Text
           onPress={() => navigation.push("Sub Inventory", { parentIds: parentIds, name: entry.name })}
           style={styles.title}
@@ -14,7 +14,15 @@ export default function SubCategory({ entry, parentIds }) {
           {entry.name}
         </Text>
       </View>
-      <Ionicons name="eye" style={{ flex: 1 }} size={35} color="#14213d" />
+      <View style={{ flex: 1, flexDirection: "row" }}>
+        <Ionicons
+          name="qr-code-outline"
+          size={35}
+          color="#14213d"
+          onPress={() => navigation.push("QR Code", { name: entry.name, parentIds: parentIds })}
+        />
+        <Ionicons name="eye" style={{ marginLeft: 10 }} size={35} color="#14213d" />
+      </View>
     </View>
   );
 }
