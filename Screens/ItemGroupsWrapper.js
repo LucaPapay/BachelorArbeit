@@ -8,6 +8,7 @@ import { NewSubItemGroup } from "../Forms/NewSubItemGroup";
 import Scanner from "../Components/Scanner";
 import ScannerResult from "../Components/ScannerResult";
 import { EntryCodeView } from "../Components/EntryCodeView";
+import FormScanner from "../Components/FormScanner";
 
 export function ItemGroupsWrapper() {
   const Stack = createStackNavigator();
@@ -26,6 +27,7 @@ export function ItemGroupsWrapper() {
         <Stack.Screen name="New Entry" component={NewEntry} />
         <Stack.Screen name="Scanner" component={Scanner} />
         <Stack.Screen name="Scanner Result" component={ScannerResult} />
+        <Stack.Screen name="Form Scanner" component={FormScanner} />
       </Stack.Navigator>
     </NavigationContainer>
   );

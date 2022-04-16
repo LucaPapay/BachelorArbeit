@@ -5,6 +5,8 @@ import { addEntryToItemGroup, nextId } from "../redux/actions";
 import { Parameter } from "../Entities/DataStorage";
 import Button from "../Components/Button";
 import { Picker } from "@react-native-picker/picker";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { DeviceEventEmitter } from "react-native";
 
 export function NewEntry({ route, navigation }) {
   const { parentIds } = route.params;
@@ -18,13 +20,14 @@ export function NewEntry({ route, navigation }) {
   const dispatch = useDispatch();
   let nextID = useSelector((state) => state.idCounter);
 
+  let event = null;
+
   return (
     <View style={{ flex: 1 }}>
       <Modal
         animationType="slide"
         visible={modalVisible}
         onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
           setModalVisible(!modalVisible);
         }}
       >
@@ -50,6 +53,9 @@ export function NewEntry({ route, navigation }) {
               >
                 <Picker.Item label="Text" value="text" />
                 <Picker.Item label="Number" value="number" />
+                <Picker.Item label="QR Code" value="qr" />
+                <Picker.Item label="Ean 8" value="ean-8" />
+                <Picker.Item label="Ean 13" value="ean-13" />
               </Picker>
             </View>
             <View style={[styles.btnWrapper, { marginTop: 100 }]}>
@@ -83,6 +89,34 @@ export function NewEntry({ route, navigation }) {
                     value={parameters[index].value}
                     placeholder={item.name}
                   />
+                ) : item.type === "ean-8" ? (
+                  <View style={{ flex: 1, flexDirection: "row" }}>
+                    <TextInput
+                      style={styles.inputQR}
+                      onChangeText={(text) => {
+                        let temp = [...parameters];
+                        temp[index].value = text;
+                        setParameters(temp);
+                      }}
+                      keyboardType="numeric"
+                      value={parameters[index].value}
+                      placeholder={item.name}
+                    />
+                    <Ionicons
+                      name="qr-code-outline"
+                      size={35}
+                      color="#14213d"
+                      onPress={() => {
+                        event = DeviceEventEmitter.addListener("event.codeScanned", (eventData) =>
+                          setParametersViaEvent(eventData)
+                        );
+                        navigation.navigate("Form Scanner", {
+                          type: item.type,
+                          index: index,
+                        });
+                      }}
+                    />
+                  </View>
                 ) : (
                   <TextInput
                     style={styles.input}
@@ -102,17 +136,28 @@ export function NewEntry({ route, navigation }) {
         />
       </View>
       <View style={styles.btnWrapper}>
-        <Button color="green" title="Save" onPress={() => addNewEntryToItemGroup(name)}></Button>
+        <Button paddingHorizontal={16} title="Amount" onPress={() => addParameter("Amount", "number")}></Button>
+        <Button paddingHorizontal={16} title="Unit" onPress={() => addParameter("Unit", "text")}></Button>
+        <Button paddingHorizontal={16} title="EAN-8" onPress={() => addParameter("EAN-8", "ean-8")}></Button>
+        <Button paddingHorizontal={16} title="EAN-13" onPress={() => addParameter("EAN-13", "ean-13")}></Button>
       </View>
       <View style={styles.btnWrapper}>
-        <Button title="+ Amount" onPress={() => addParameter("Amount", "number")}></Button>
-        <Button title="+ Unit" onPress={() => addParameter("Unit", "text")}></Button>
+        <Button width="90%" title="+ new Parameter" onPress={() => setModalVisible(true)}></Button>
       </View>
       <View style={styles.btnWrapper}>
-        <Button title="+ new Parameter" onPress={() => setModalVisible(true)}></Button>
+        <Button width="90%" color="green" title="Save" onPress={() => addNewEntryToItemGroup(name)}></Button>
       </View>
     </View>
   );
+
+  function setParametersViaEvent(eventData) {
+    event.remove();
+    let temp = [...parameters];
+    let text = eventData.text;
+    let index = eventData.index;
+    temp[index].value = text;
+    setParameters(temp);
+  }
 
   function addParameter(name, type) {
     let newParameter = new Parameter(name, type, "");
@@ -145,6 +190,14 @@ const styles = StyleSheet.create({
     height: 40,
     width: 300,
     paddingHorizontal: 5,
+    backgroundColor: "white",
+    marginBottom: 5,
+  },
+  inputQR: {
+    height: 40,
+    width: 255,
+    paddingHorizontal: 5,
+    marginRight: 10,
     backgroundColor: "white",
     marginBottom: 5,
   },

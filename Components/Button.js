@@ -2,14 +2,22 @@ import React from "react";
 import { Text, StyleSheet, Pressable } from "react-native";
 
 export default function Button(props) {
-  const { onPress, title = "Save", color = "#14213d", disabled = false } = props;
+  const {
+    onPress,
+    title = "Save",
+    color = "#14213d",
+    disabled = false,
+    width = "default",
+    paddingHorizontal = 20,
+  } = props;
 
   let styles = StyleSheet.create({
     button: {
       alignItems: "center",
+      width: width === "default" ? "auto" : width,
       justifyContent: "center",
       paddingVertical: 12,
-      paddingHorizontal: 20,
+      paddingHorizontal: paddingHorizontal,
       marginHorizontal: 5,
       borderRadius: 10,
       elevation: 3,
