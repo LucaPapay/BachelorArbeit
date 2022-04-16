@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Platform } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import Barcode from "@kichiyaki/react-native-barcode-generator";
 import Button from "../Components/Button";
@@ -7,16 +7,21 @@ import React, { useState } from "react";
 export default function ScannerResult({ route, navigation }) {
   const { scannedResult, type } = route.params;
   let scanned = scannedResult.substring(1, scannedResult.length - 1);
-  let trimmedType = type.substring(1, type.length - 1);
+  let trimmedType = "";
+  if (Platform.OS === "ios") {
+    trimmedType = type.substring(1, type.length - 1);
+  } else {
+    trimmedType = type;
+  }
 
   const [title, onChangeTitle] = React.useState("Press Lookup to Search for Item in UPC item db");
 
   let code = <Text>kein bild vorhanden</Text>;
-  if (trimmedType === "org.iso.QRCode") {
+  if (trimmedType === "org.iso.QRCode" || trimmedType === "256") {
     code = <QRCode style={{ marginBottom: 25 }} size={350} value={scanned} />;
-  } else if (trimmedType === "org.gs1.EAN-13") {
+  } else if (trimmedType === "org.gs1.EAN-13" || trimmedType === "32") {
     code = <Barcode style={{ marginBottom: 25 }} format="EAN13" value={scanned} text={scanned}></Barcode>;
-  } else if (trimmedType === "org.gs1.EAN-8") {
+  } else if (trimmedType === "org.gs1.EAN-8" || trimmedType === "64") {
     code = <Barcode style={{ marginBottom: 25 }} format="EAN8" value={scanned} text={scanned}></Barcode>;
   }
 
@@ -36,7 +41,7 @@ export default function ScannerResult({ route, navigation }) {
       .then((response) => response.json())
       .then((json) => {
         console.log(json);
-        if (json.items.length === 0) {
+        if (json.items && json.items.length === 0) {
           onChangeTitle("Item not in DB");
         }
         if (json.code === "OK") {

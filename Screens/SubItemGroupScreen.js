@@ -2,12 +2,12 @@ import { Platform, StyleSheet, Text, View, StatusBar, FlatList } from "react-nat
 import { useSelector } from "react-redux";
 import Button from "../Components/Button";
 import EntryListEntry from "../Components/EntryListEntry";
-import SubCategoryListEntry from "../Components/SubCategoryListEntry";
+import SubItemGroupListEntry from "../Components/SubItemGroupListEntry";
 
-export function SubInventoryScreen({ route, navigation }) {
+export function SubItemGroupScreen({ route, navigation }) {
   const { parentIds } = route.params;
 
-  let DATA = getCorrectSubCategory(parentIds);
+  let DATA = getCorrectSubItemGroup(parentIds);
 
   return (
     <View style={styles.container}>
@@ -22,9 +22,9 @@ export function SubInventoryScreen({ route, navigation }) {
           }
         ></Button>
         <Button
-          title="add SubCategory"
+          title="add Item Group"
           onPress={() =>
-            navigation.navigate("New SubCategory", {
+            navigation.navigate("New SubItemGroup", {
               parentIds: parentIds,
               name: DATA.name,
             })
@@ -32,8 +32,8 @@ export function SubInventoryScreen({ route, navigation }) {
         ></Button>
       </View>
       <View style={{ flex: 2 }}>
-        <Text style={styles.title}>Sub Categories</Text>
-        <FlatList data={DATA.subCategories} renderItem={renderSubCategoryItem} keyExtractor={(item) => item.id} />
+        <Text style={styles.title}>Item Groups</Text>
+        <FlatList data={DATA.subItemGroups} renderItem={renderSubItemGroupItem} keyExtractor={(item) => item.id} />
       </View>
       <View style={{ flex: 3 }}>
         <Text style={styles.title}>Entrys</Text>
@@ -43,24 +43,24 @@ export function SubInventoryScreen({ route, navigation }) {
   );
 }
 
-const renderSubCategoryItem = ({ item }) => {
-  return <SubCategoryListEntry entry={item} parentIds={item.parentIds.concat(item.id)} />;
+const renderSubItemGroupItem = ({ item }) => {
+  return <SubItemGroupListEntry entry={item} parentIds={item.parentIds.concat(item.id)} />;
 };
 
 const renderEntryItem = ({ item }) => {
   return <EntryListEntry entry={item} parentIds={item.parentIds.concat(item.id)} />;
 };
 
-function getCorrectSubCategory(parentIds) {
+function getCorrectSubItemGroup(parentIds) {
   return useSelector((state) => {
-    let category = state.data;
-    category = state.data.find((entry) => entry.id === parentIds[0]);
+    let itemgroup = state.data;
+    itemgroup = state.data.find((entry) => entry.id === parentIds[0]);
 
     for (var i = 1; i < parentIds.length; i++) {
-      category = category.subCategories.find((entry) => entry.id === parentIds[i]);
+      itemgroup = itemgroup.subItemGroups.find((entry) => entry.id === parentIds[i]);
     }
 
-    return category;
+    return itemgroup;
   });
 }
 

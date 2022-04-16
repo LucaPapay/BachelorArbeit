@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Text, View, TextInput, StyleSheet, FlatList, Modal } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { addEntryToCategory, nextId } from "../redux/actions";
+import { addEntryToItemGroup, nextId } from "../redux/actions";
 import { Parameter } from "../Entities/DataStorage";
 import Button from "../Components/Button";
 import { Picker } from "@react-native-picker/picker";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { DeviceEventEmitter } from "react-native";
 
 export function NewEntry({ route, navigation }) {
   const { parentIds } = route.params;
@@ -18,13 +20,64 @@ export function NewEntry({ route, navigation }) {
   const dispatch = useDispatch();
   let nextID = useSelector((state) => state.idCounter);
 
+  let event = null;
+
+  const CodeParameter = createCodeParameter();
+  const TextParameter = createTextParameter();
+
   return (
     <View style={{ flex: 1 }}>
+      {getModal()}
+      <View style={{ flex: 8, justifyContent: "flex-start", alignItems: "center", marginTop: 20 }}>
+        <Text style={styles.header}></Text>
+        <View style={styles.formLine}>
+          <Text style={styles.header}>Name:</Text>
+          <TextInput style={styles.input} onChangeText={onChangeName} value={name} placeholder="Name" />
+        </View>
+        <FlatList
+          data={parameters}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item, index }) => {
+            return (
+              <View style={styles.formLine}>
+                <Text style={styles.header}>{item.name}</Text>
+                {item.type === "text" ? (
+                  <TextParameter item={item} index={index} keyboardType="default" />
+                ) : item.type === "ean-8" ? (
+                  <CodeParameter item={item} index={index} icon="barcode-outline" keyboardType="numeric" />
+                ) : item.type === "ean-13" ? (
+                  <CodeParameter item={item} index={index} icon="barcode-outline" keyboardType="numeric" />
+                ) : item.type === "qr" ? (
+                  <CodeParameter item={item} index={index} icon="qr-code-outline" keyboardType="default" />
+                ) : (
+                  <TextParameter item={item} index={index} keyboardType="numeric" />
+                )}
+              </View>
+            );
+          }}
+        />
+      </View>
+      <View style={styles.btnWrapper}>
+        <Button paddingHorizontal={16} title="Amount" onPress={() => addParameter("Amount", "number")}></Button>
+        <Button paddingHorizontal={16} title="Unit" onPress={() => addParameter("Unit", "text")}></Button>
+        <Button paddingHorizontal={16} title="EAN-8" onPress={() => addParameter("EAN-8", "ean-8")}></Button>
+        <Button paddingHorizontal={16} title="EAN-13" onPress={() => addParameter("EAN-13", "ean-13")}></Button>
+      </View>
+      <View style={styles.btnWrapper}>
+        <Button width="90%" title="+ new Parameter" onPress={() => setModalVisible(true)}></Button>
+      </View>
+      <View style={styles.btnWrapper}>
+        <Button width="90%" color="green" title="Save" onPress={() => addNewEntryToItemGroup(name)}></Button>
+      </View>
+    </View>
+  );
+
+  function getModal() {
+    return (
       <Modal
         animationType="slide"
         visible={modalVisible}
         onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
           setModalVisible(!modalVisible);
         }}
       >
@@ -50,6 +103,9 @@ export function NewEntry({ route, navigation }) {
               >
                 <Picker.Item label="Text" value="text" />
                 <Picker.Item label="Number" value="number" />
+                <Picker.Item label="QR Code" value="qr" />
+                <Picker.Item label="Ean 8" value="ean-8" />
+                <Picker.Item label="Ean 13" value="ean-13" />
               </Picker>
             </View>
             <View style={[styles.btnWrapper, { marginTop: 100 }]}>
@@ -59,60 +115,68 @@ export function NewEntry({ route, navigation }) {
           </View>
         </View>
       </Modal>
-      <View style={{ flex: 8, justifyContent: "flex-start", alignItems: "center", marginTop: 20 }}>
-        <Text style={styles.header}></Text>
-        <View style={styles.formLine}>
-          <Text style={styles.header}>Name:</Text>
-          <TextInput style={styles.input} onChangeText={onChangeName} value={name} placeholder="Name" />
-        </View>
-        <FlatList
-          data={parameters}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item, index }) => {
-            return (
-              <View style={styles.formLine}>
-                <Text style={styles.header}>{item.name}</Text>
-                {item.type === "text" ? (
-                  <TextInput
-                    style={styles.input}
-                    onChangeText={(text) => {
-                      let temp = [...parameters];
-                      temp[index].value = text;
-                      setParameters(temp);
-                    }}
-                    value={parameters[index].value}
-                    placeholder={item.name}
-                  />
-                ) : (
-                  <TextInput
-                    style={styles.input}
-                    onChangeText={(text) => {
-                      let temp = [...parameters];
-                      temp[index].value = text;
-                      setParameters(temp);
-                    }}
-                    keyboardType="numeric"
-                    value={parameters[index].value}
-                    placeholder={item.name}
-                  />
-                )}
-              </View>
+    );
+  }
+
+  function createTextParameter() {
+    return ({ item, index, keyboardType }) => (
+      <View style={{ flex: 1, flexDirection: "row" }}>
+        <TextInput
+          style={styles.input}
+          onChangeText={(text) => {
+            let temp = [...parameters];
+            temp[index].value = text;
+            setParameters(temp);
+          }}
+          keyboardType={keyboardType}
+          value={parameters[index].value}
+          placeholder={item.name}
+        />
+      </View>
+    );
+  }
+
+  function createCodeParameter() {
+    return ({ item, index, icon, keyboardType }) => (
+      <View style={{ flex: 1, flexDirection: "row" }}>
+        <TextInput
+          style={styles.inputQR}
+          onChangeText={(text) => {
+            let temp = [...parameters];
+            temp[index].value = text;
+            setParameters(temp);
+          }}
+          keyboardType={keyboardType}
+          value={parameters[index].value}
+          placeholder={item.name}
+        />
+        <Ionicons
+          name={icon}
+          size={35}
+          color="#14213d"
+          onPress={() => {
+            event = DeviceEventEmitter.addListener("event.codeScanned", (eventData) =>
+              setParametersViaEvent(eventData)
             );
+            navigation.navigate("Form Scanner", {
+              type: item.type,
+              index: index,
+            });
           }}
         />
       </View>
-      <View style={styles.btnWrapper}>
-        <Button color="green" title="Save" onPress={() => addNewEntryToCategory(name)}></Button>
-      </View>
-      <View style={styles.btnWrapper}>
-        <Button title="+ Amount" onPress={() => addParameter("Amount", "number")}></Button>
-        <Button title="+ Unit" onPress={() => addParameter("Unit", "text")}></Button>
-      </View>
-      <View style={styles.btnWrapper}>
-        <Button title="+ new Parameter" onPress={() => setModalVisible(true)}></Button>
-      </View>
-    </View>
-  );
+    );
+  }
+
+  function setParametersViaEvent(eventData) {
+    event.remove();
+    let temp = [...parameters];
+    let text = eventData.text;
+    text = text.substring(1, text.length - 1);
+    let index = eventData.index;
+    temp[index].value = text;
+    setParameters(temp);
+  }
 
   function addParameter(name, type) {
     let newParameter = new Parameter(name, type, "");
@@ -120,9 +184,9 @@ export function NewEntry({ route, navigation }) {
     setParameters((parameters) => [...parameters, newParameter]);
   }
 
-  function addNewEntryToCategory(name) {
+  function addNewEntryToItemGroup(name) {
     dispatch(nextId());
-    dispatch(addEntryToCategory(nextID, name, parentIds, parameters));
+    dispatch(addEntryToItemGroup(nextID, name, parentIds, parameters));
     navigation.goBack();
   }
 
@@ -145,6 +209,14 @@ const styles = StyleSheet.create({
     height: 40,
     width: 300,
     paddingHorizontal: 5,
+    backgroundColor: "white",
+    marginBottom: 5,
+  },
+  inputQR: {
+    height: 40,
+    width: 255,
+    paddingHorizontal: 5,
+    marginRight: 10,
     backgroundColor: "white",
     marginBottom: 5,
   },

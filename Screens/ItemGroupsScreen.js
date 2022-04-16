@@ -1,15 +1,15 @@
 import { Platform, StyleSheet, Text, View, StatusBar, FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import Button from "../Components/Button";
-import SubCategoryListEntry from "../Components/SubCategoryListEntry";
+import SubItemGroupListEntry from "../Components/SubItemGroupListEntry";
 
-export function InventoriesScreen({ navigation }) {
+export function ItemGroupsScreen({ navigation }) {
   let DATA = useSelector((state) => state.data);
 
   return (
     <View style={styles.container}>
       <View style={styles.btnContainer}>
-        <Button title="add Category" onPress={() => navigation.navigate("New Category")}></Button>
+        <Button title="add ItemGroup" onPress={() => navigation.navigate("New ItemGroup")}></Button>
         <Button title="Scanner Test" onPress={() => navigation.navigate("Scanner")}></Button>
       </View>
       <FlatList data={DATA} renderItem={renderItem} keyExtractor={(item) => item.id} />
@@ -18,7 +18,7 @@ export function InventoriesScreen({ navigation }) {
 }
 
 const renderItem = ({ item }) => {
-  return <SubCategoryListEntry entry={item} parentIds={[item.id]} />;
+  return <SubItemGroupListEntry entry={item} parentIds={[item.id]} />;
 };
 
 const styles = StyleSheet.create({

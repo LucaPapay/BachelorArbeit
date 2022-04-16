@@ -1,5 +1,5 @@
-import { ADD_CATEGORY_TO_INVENTORIES, ADD_TO_INVENTORIES, INIT, NEXT_ID, ADD_SUB_CATEGORY } from "./types";
-import { InventoryCategory, InventoryEntry } from "../Entities/DataStorage";
+import { ADD_ITEMGROUP_TO_INVENTORIES, ADD_TO_INVENTORIES, INIT, NEXT_ID, ADD_SUB_ITEMGROUP } from "./types";
+import { InventoryItemGroup, InventoryEntry } from "../Entities/DataStorage";
 
 const initalState = {
   data: [],
@@ -22,38 +22,38 @@ function nextId(state) {
   };
 }
 
-function addNewCategory(state, action) {
-  let newCategory = new InventoryCategory(action.newEntry, action.id, []);
+function addNewItemGroup(state, action) {
+  let newItemGroup = new InventoryItemGroup(action.newEntry, action.id, []);
   return {
     ...state,
-    data: [...state.data, newCategory],
+    data: [...state.data, newItemGroup],
   };
 }
 
-const recursiveAddInventoryEntry = (subCategories, parentIds, action, parentIdsCopy) => {
-  const recur = (subCategories, parentIds, action, parentIdsCopy) => {
+const recursiveAddInventoryEntry = (subItemGroups, parentIds, action, parentIdsCopy) => {
+  const recur = (subItemGroups, parentIds, action, parentIdsCopy) => {
     //found parent
     if (parentIds.length === 1) {
       let newInventoryEntry = new InventoryEntry(action.newEntry, action.id, parentIdsCopy, action.parameters);
-      return subCategories.map((element) =>
+      return subItemGroups.map((element) =>
         element.id === parentIds[0] ? { ...element, data: element.data.concat(newInventoryEntry) } : element
       );
     }
     const currentParent = parentIds[0];
     //recursively traverse n-tree
-    return subCategories.map((element) =>
+    return subItemGroups.map((element) =>
       element.id === currentParent
         ? {
             ...element,
-            subCategories: recursiveAddInventoryEntry(element.subCategories, parentIds.slice(1), action, parentIdsCopy),
+            subItemGroups: recursiveAddInventoryEntry(element.subItemGroups, parentIds.slice(1), action, parentIdsCopy),
           }
         : element
     );
   };
-  return recur(subCategories, parentIds, action, parentIdsCopy);
+  return recur(subItemGroups, parentIds, action, parentIdsCopy);
 };
 
-function addNewEntryToCategory(state, action) {
+function addNewEntryToItemGroup(state, action) {
   let parentIds = action.parentIds;
   if (parentIds.length === 1) {
     let newEntry = new InventoryEntry(action.newEntry, action.id, action.parentIds, action.parameters);
@@ -77,25 +77,25 @@ function addNewEntryToCategory(state, action) {
   }
 }
 
-const recursiveAddSubCategory = (subCategories, parentIds, id, newName, parentIdsCopy) => {
-  const recur = (subCategories, parentIds, id, newName, parentIdsCopy) => {
+const recursiveAddSubItemGroup = (subItemGroups, parentIds, id, newName, parentIdsCopy) => {
+  const recur = (subItemGroups, parentIds, id, newName, parentIdsCopy) => {
     //found parent
     if (parentIds.length === 1) {
-      let newSubCategory = new InventoryCategory(newName, id, parentIdsCopy);
-      return subCategories.map((element) =>
+      let newSubItemGroup = new InventoryItemGroup(newName, id, parentIdsCopy);
+      return subItemGroups.map((element) =>
         element.id === parentIds[0]
-          ? { ...element, subCategories: element.subCategories.concat(newSubCategory) }
+          ? { ...element, subItemGroups: element.subItemGroups.concat(newSubItemGroup) }
           : element
       );
     }
     const currentParent = parentIds[0];
     //recursively traverse n-tree
-    return subCategories.map((element) =>
+    return subItemGroups.map((element) =>
       element.id === currentParent
         ? {
             ...element,
-            subCategories: recursiveAddSubCategory(
-              element.subCategories,
+            subItemGroups: recursiveAddSubItemGroup(
+              element.subItemGroups,
               parentIds.slice(1),
               id,
               newName,
@@ -105,13 +105,13 @@ const recursiveAddSubCategory = (subCategories, parentIds, id, newName, parentId
         : element
     );
   };
-  return recur(subCategories, parentIds, id, newName, parentIdsCopy);
+  return recur(subItemGroups, parentIds, id, newName, parentIdsCopy);
 };
 
-function addSubCategory(state, action) {
+function addSubItemGroup(state, action) {
   let parentIds = action.parentIds;
   if (parentIds.length === 1) {
-    let newSubCategory = new InventoryCategory(action.newEntry, action.id, action.parentIds);
+    let newSubItemGroup = new InventoryItemGroup(action.newEntry, action.id, action.parentIds);
     return {
       ...state,
       data: state.data.map((item) => {
@@ -120,14 +120,14 @@ function addSubCategory(state, action) {
         }
         return {
           ...item,
-          subCategories: item.subCategories.concat(newSubCategory),
+          subItemGroups: item.subItemGroups.concat(newSubItemGroup),
         };
       }),
     };
   } else {
     return {
       ...state,
-      data: recursiveAddSubCategory(state.data, parentIds, action.id, action.newEntry, parentIds),
+      data: recursiveAddSubItemGroup(state.data, parentIds, action.id, action.newEntry, parentIds),
     };
   }
 }
@@ -136,12 +136,12 @@ function reducer(state = initalState, action) {
   switch (action.type) {
     case INIT:
       return setInitial(state);
-    case ADD_CATEGORY_TO_INVENTORIES:
-      return addNewCategory(state, action);
+    case ADD_ITEMGROUP_TO_INVENTORIES:
+      return addNewItemGroup(state, action);
     case ADD_TO_INVENTORIES:
-      return addNewEntryToCategory(state, action);
-    case ADD_SUB_CATEGORY:
-      return addSubCategory(state, action);
+      return addNewEntryToItemGroup(state, action);
+    case ADD_SUB_ITEMGROUP:
+      return addSubItemGroup(state, action);
     case NEXT_ID:
       return nextId(state);
     default:

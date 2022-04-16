@@ -1,8 +1,8 @@
-class InventoryCategory {
+class InventoryItemGroup {
   constructor(name, id, parentIds) {
     this.id = id;
     this.name = name;
-    this.subCategories = [];
+    this.subItemGroups = [];
     this.data = [];
     this.parentIds = parentIds;
   }
@@ -25,4 +25,4 @@ class Parameter {
   }
 }
 
-export { InventoryCategory, InventoryEntry, Parameter };
+export { InventoryItemGroup, InventoryEntry, Parameter };

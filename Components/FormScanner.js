@@ -3,10 +3,22 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Camera } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useIsFocused } from "@react-navigation/native";
+import { DeviceEventEmitter } from "react-native";
 
-export default function Scanner({ navigation }) {
+export default function FormScanner({ route, navigation }) {
+  const { typeToScan, index } = route.params;
   const [hasPermission, setHasPermission] = useState(null);
   const isFocused = useIsFocused();
+
+  let constantTypeArray = [];
+
+  if (typeToScan === "ean-8") {
+    constantTypeArray = [BarCodeScanner.Constants.BarCodeType.ean8];
+  } else if (typeToScan === "ean-13") {
+    constantTypeArray = [BarCodeScanner.Constants.BarCodeType.ean13];
+  } else {
+    constantTypeArray = [BarCodeScanner.Constants.BarCodeType.qr];
+  }
 
   useEffect(() => {
     (async () => {
@@ -29,16 +41,13 @@ export default function Scanner({ navigation }) {
           onBarCodeScanned={(...args) => {
             const data = args[0].data;
             const type = args[0].type;
-            result = JSON.stringify(data);
-            typeString = JSON.stringify(type);
-            navigation.navigate("Scanner Result", { scannedResult: result, type: typeString });
+            let result = JSON.stringify(data);
+            let typeString = JSON.stringify(type);
+            DeviceEventEmitter.emit("event.codeScanned", { text: result, index: index });
+            navigation.goBack();
           }}
           barCodeScannerSettings={{
-            barCodeTypes: [
-              BarCodeScanner.Constants.BarCodeType.qr,
-              BarCodeScanner.Constants.BarCodeType.ean8,
-              BarCodeScanner.Constants.BarCodeType.ean13,
-            ],
+            barCodeTypes: constantTypeArray,
           }}
           style={{ flex: 2 }}
         />

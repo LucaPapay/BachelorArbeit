@@ -1,10 +1,11 @@
 import React from "react";
 import { Text, View, TextInput, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { addCategoryToInventories, nextId } from "../redux/actions";
+import { addSubItemGroup, nextId } from "../redux/actions";
 import Button from "../Components/Button";
 
-export function NewCategory({ navigation }) {
+export function NewSubItemGroup({ route, navigation }) {
+  const { parentIds } = route.params;
   const [text, onChangeText] = React.useState("");
 
   const dispatch = useDispatch();
@@ -13,17 +14,20 @@ export function NewCategory({ navigation }) {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <View style={styles.formLine}>
-        <Text style={styles.header}>Category Name</Text>
+        <Text style={styles.header}>Subitemgroup Name</Text>
         <TextInput style={styles.input} onChangeText={onChangeText} value={text} placeholder="Name" />
       </View>
-      <Button title="SAVE" onPress={() => addNewInventoryCategroy(dispatch, nextID, text, navigation)}></Button>
+      <Button
+        title="SAVE"
+        onPress={() => addSubItemGroupToItemGroup(dispatch, nextID, text, navigation, parentIds)}
+      ></Button>
     </View>
   );
 }
 
-function addNewInventoryCategroy(dispatch, nextID, text, navigation) {
+function addSubItemGroupToItemGroup(dispatch, nextID, text, navigation, parentIds) {
   dispatch(nextId());
-  dispatch(addCategoryToInventories(text, nextID));
+  dispatch(addSubItemGroup(nextID, text, parentIds));
   navigation.goBack();
 }
 
