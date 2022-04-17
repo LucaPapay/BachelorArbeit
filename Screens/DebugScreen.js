@@ -1,8 +1,9 @@
-import { Text, View, StyleSheet, TextInput } from "react-native";
+import { View, StyleSheet, TextInput } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { initalState, nextId } from "../redux/actions";
-import Button from "../Components/Button";
+import { Box, Button, VStack } from "native-base";
 import React, { useState } from "react";
+import { Text } from "native-base";
 
 export function DebugScreen() {
   const dispatch = useDispatch();
@@ -12,24 +13,19 @@ export function DebugScreen() {
   const [ean, setEan] = useState("885909128525");
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginTop: 100,
-        marginBottom: 100,
-      }}
-    >
-      <Button color="tomato" title="RESET STORE" onPress={() => dispatch(initalState())} />
-      <Text>
-        Current ID: {counter} <Button color="tomato" title="+" onPress={() => dispatch(nextId())} />
-      </Text>
-      <Button color="tomato" title="Store" onPress={() => console.log(store)} />
-      <Button color="tomato" title="TEST api" onPress={() => testAPI()} />
-      <TextInput style={styles.input} onChangeText={setEan} value={ean} placeholder="EAN / UPC / ISBN" />
-      <Text>Name: {title}</Text>
-    </View>
+    <Box bg="background.800" height="100%">
+      <VStack space={10} alignItems="center" mt={10}>
+        <Button onPress={() => dispatch(initalState())}>Reset</Button>
+        <Text fontSize="lg">Current ID: {counter}</Text>
+        <Button height="8" onPress={() => dispatch(nextId())}>
+          id plus
+        </Button>
+        <Button onPress={() => console.log(store)}>Store</Button>
+        <Button onPress={() => testAPI()}>TEST api</Button>
+        <TextInput style={styles.input} onChangeText={setEan} value={ean} placeholder="EAN / UPC / ISBN" />
+        <Text>Name: {title}</Text>
+      </VStack>
+    </Box>
   );
 
   function testAPI() {

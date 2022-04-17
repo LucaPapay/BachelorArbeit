@@ -1,5 +1,6 @@
 import React from "react";
-import { Text, StyleSheet, Pressable } from "react-native";
+import { Text, StyleSheet } from "react-native";
+import { Pressable } from "native-base";
 
 export default function Button(props) {
   const {
