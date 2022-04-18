@@ -20,6 +20,8 @@ export default function FormScanner({ route, navigation }) {
     constantTypeArray = [BarCodeScanner.Constants.BarCodeType.qr];
   }
 
+  console.log(constantTypeArray);
+
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
@@ -43,6 +45,7 @@ export default function FormScanner({ route, navigation }) {
             const type = args[0].type;
             let result = JSON.stringify(data);
             let typeString = JSON.stringify(type);
+            console.log("scanned");
             DeviceEventEmitter.emit("event.codeScanned", { text: result, index: index });
             navigation.goBack();
           }}

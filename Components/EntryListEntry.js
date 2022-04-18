@@ -16,7 +16,13 @@ export default function EntryListEntry({ entry, parentIds }) {
           color="#14213d"
           onPress={() => navigation.push("QR Code", { name: entry.name, parentIds: parentIds })}
         />
-        <Ionicons name="search-outline" style={{ marginLeft: 10 }} size={35} color="#14213d" />
+        <Ionicons
+          name="eye"
+          style={{ marginLeft: 10 }}
+          size={35}
+          color="#14213d"
+          onPress={() => navigation.push("Entry Details", { entry: entry })}
+        />
       </View>
     </View>
   );

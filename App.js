@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { MainRouter } from "./Components/MainRouter";
+import { MainRouter } from "./Routers/MainRouter";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store } from "./redux/store";

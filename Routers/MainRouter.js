@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { HomeScreen } from "../Screens/HomeScreen";
 import { DebugScreen } from "../Screens/DebugScreen";
-import { ItemGroupsWrapper } from "../Screens/ItemGroupsWrapper";
+import { ItemGroupsStackRouter } from "./ItemGroupsStackRouter";
 import { StyleSheet } from "react-native";
 
 const Tab = createBottomTabNavigator();
@@ -19,7 +19,7 @@ export function MainRouter() {
         })}
       >
         <Tab.Screen name={"Home"} component={HomeScreen} />
-        <Tab.Screen name={"Item Groups"} component={ItemGroupsWrapper} options={{ headerShown: false }} />
+        <Tab.Screen name={"Item Groups"} component={ItemGroupsStackRouter} options={{ headerShown: false }} />
         <Tab.Screen name="Debug" component={DebugScreen} />
       </Tab.Navigator>
     </NavigationContainer>

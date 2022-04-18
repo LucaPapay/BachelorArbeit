@@ -80,23 +80,26 @@ export function SubItemGroupScreen({ route, navigation }) {
           const color = index === i ? "#e5e5e5" : "#a1a1aa";
           const borderColor = index === i ? "cyan.500" : "gray.400";
           return (
-            <Box borderBottomWidth="3" borderColor={borderColor} flex={1} alignItems="center" p="3">
-              <Pressable
-                onPress={() => {
-                  console.log(i);
-                  setIndex(i);
+            <Pressable
+              key={i}
+              borderBottomWidth="3"
+              borderColor={borderColor}
+              flex={1}
+              alignItems="center"
+              p="3"
+              onPress={() => {
+                setIndex(i);
+              }}
+            >
+              <Animated.Text
+                style={{
+                  color,
+                  fontSize: 20,
                 }}
               >
-                <Animated.Text
-                  style={{
-                    color,
-                    fontSize: 20,
-                  }}
-                >
-                  {route.title}
-                </Animated.Text>
-              </Pressable>
-            </Box>
+                {route.title}
+              </Animated.Text>
+            </Pressable>
           );
         })}
       </Box>
