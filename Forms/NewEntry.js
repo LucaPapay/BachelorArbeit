@@ -7,6 +7,7 @@ import Button from "../Components/Button";
 import { Picker } from "@react-native-picker/picker";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { DeviceEventEmitter } from "react-native";
+import { Input } from "native-base";
 
 export function NewEntry({ route, navigation }) {
   const { parentIds } = route.params;
@@ -21,9 +22,6 @@ export function NewEntry({ route, navigation }) {
   let nextID = useSelector((state) => state.idCounter);
 
   let event = null;
-
-  const CodeParameter = createCodeParameter();
-  const TextParameter = createTextParameter();
 
   return (
     <View style={{ flex: 1 }}>
@@ -42,15 +40,93 @@ export function NewEntry({ route, navigation }) {
               <View style={styles.formLine}>
                 <Text style={styles.header}>{item.name}</Text>
                 {item.type === "text" ? (
-                  <TextParameter item={item} index={index} keyboardType="default" />
-                ) : item.type === "ean-8" ? (
-                  <CodeParameter item={item} index={index} icon="barcode-outline" keyboardType="numeric" />
-                ) : item.type === "ean-13" ? (
-                  <CodeParameter item={item} index={index} icon="barcode-outline" keyboardType="numeric" />
+                  <View style={{ flex: 1, flexDirection: "row" }}>
+                    <Input
+                      w="300"
+                      style={styles.input}
+                      onChangeText={(text) => {
+                        let temp = [...parameters];
+                        temp[index].value = text;
+                        setParameters(temp);
+                      }}
+                      value={parameters[index].value}
+                      keyboardType={"default"}
+                      placeholder={item.name}
+                    />
+                  </View>
+                ) : item.type === "ean-8" || item.type === "ean-13" ? (
+                  <View style={{ flex: 1, flexDirection: "row" }}>
+                    <Input
+                      w="300"
+                      style={styles.inputQR}
+                      onChangeText={(text) => {
+                        let temp = [...parameters];
+                        temp[index].value = text;
+                        setParameters(temp);
+                      }}
+                      keyboardType="numeric"
+                      value={parameters[index].value}
+                      placeholder={item.name}
+                    />
+                    <Ionicons
+                      name="barcode-outline"
+                      size={35}
+                      color="#14213d"
+                      onPress={() => {
+                        event = DeviceEventEmitter.addListener("event.codeScanned", (eventData) =>
+                          setParametersViaEvent(eventData)
+                        );
+                        navigation.navigate("Form Scanner", {
+                          typeToScan: item.type,
+                          index: index,
+                        });
+                      }}
+                    />
+                  </View>
                 ) : item.type === "qr" ? (
-                  <CodeParameter item={item} index={index} icon="qr-code-outline" keyboardType="default" />
+                  <View style={{ flex: 1, flexDirection: "row" }}>
+                    <Input
+                      w="300"
+                      style={styles.inputQR}
+                      onChangeText={(text) => {
+                        let temp = [...parameters];
+                        temp[index].value = text;
+                        setParameters(temp);
+                      }}
+                      keyboardType="numeric"
+                      value={parameters[index].value}
+                      placeholder={item.name}
+                    />
+                    <Ionicons
+                      name="qr-code-outline"
+                      size={35}
+                      color="#14213d"
+                      onPress={() => {
+                        event = DeviceEventEmitter.addListener("event.codeScanned", (eventData) =>
+                          setParametersViaEvent(eventData)
+                        );
+                        navigation.navigate("Form Scanner", {
+                          typeToScan: item.type,
+                          index: index,
+                        });
+                      }}
+                    />
+                  </View>
                 ) : (
-                  <TextParameter item={item} index={index} keyboardType="numeric" />
+                  <View style={{ flex: 1, flexDirection: "row" }}>
+                    <Input
+                      w="300"
+                      style={styles.input}
+                      onChangeText={(text) => {
+                        let temp = [...parameters];
+                        temp[index].value = text;
+                        setParameters(temp);
+                      }}
+                      value={parameters[index].value}
+                      keyboardType={"numeric"}
+                      placeholder={item.name}
+                    />
+                  </View>
                 )}
               </View>
             );
@@ -115,56 +191,6 @@ export function NewEntry({ route, navigation }) {
           </View>
         </View>
       </Modal>
-    );
-  }
-
-  function createTextParameter() {
-    return ({ item, index, keyboardType }) => (
-      <View style={{ flex: 1, flexDirection: "row" }}>
-        <TextInput
-          style={styles.input}
-          onChangeText={(text) => {
-            let temp = [...parameters];
-            temp[index].value = text;
-            setParameters(temp);
-          }}
-          keyboardType={keyboardType}
-          value={parameters[index].value}
-          placeholder={item.name}
-        />
-      </View>
-    );
-  }
-
-  function createCodeParameter() {
-    return ({ item, index, icon, keyboardType }) => (
-      <View style={{ flex: 1, flexDirection: "row" }}>
-        <TextInput
-          style={styles.inputQR}
-          onChangeText={(text) => {
-            let temp = [...parameters];
-            temp[index].value = text;
-            setParameters(temp);
-          }}
-          keyboardType={keyboardType}
-          value={parameters[index].value}
-          placeholder={item.name}
-        />
-        <Ionicons
-          name={icon}
-          size={35}
-          color="#14213d"
-          onPress={() => {
-            event = DeviceEventEmitter.addListener("event.codeScanned", (eventData) =>
-              setParametersViaEvent(eventData)
-            );
-            navigation.navigate("Form Scanner", {
-              type: item.type,
-              index: index,
-            });
-          }}
-        />
-      </View>
     );
   }
 

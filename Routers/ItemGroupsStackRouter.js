@@ -1,16 +1,17 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { NewItemGroup } from "../Forms/NewItemGroup";
-import { ItemGroupsScreen } from "./ItemGroupsScreen";
+import { ItemGroupsScreen } from "../Screens/ItemGroupsScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { NewEntry } from "../Forms/NewEntry";
-import { SubItemGroupScreen } from "./SubItemGroupScreen";
+import { SubItemGroupScreen } from "../Screens/SubItemGroupScreen";
 import { NewSubItemGroup } from "../Forms/NewSubItemGroup";
 import Scanner from "../Components/Scanner";
 import ScannerResult from "../Components/ScannerResult";
 import { EntryCodeView } from "../Components/EntryCodeView";
 import FormScanner from "../Components/FormScanner";
+import { EntryDetails } from "../Components/EntryDetails";
 
-export function ItemGroupsWrapper() {
+export function ItemGroupsStackRouter() {
   const Stack = createStackNavigator();
   return (
     <NavigationContainer independent={true}>
@@ -28,6 +29,11 @@ export function ItemGroupsWrapper() {
         <Stack.Screen name="Scanner" component={Scanner} />
         <Stack.Screen name="Scanner Result" component={ScannerResult} />
         <Stack.Screen name="Form Scanner" component={FormScanner} />
+        <Stack.Screen
+          name="Entry Details"
+          component={EntryDetails}
+          options={({ route }) => ({ title: route.params.entry.name })}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
