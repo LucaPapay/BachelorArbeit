@@ -43,6 +43,7 @@ export function NewEntry({ route, navigation }) {
                   <View style={{ flex: 1, flexDirection: "row" }}>
                     <Input
                       w="300"
+                      color="black"
                       style={styles.input}
                       onChangeText={(text) => {
                         let temp = [...parameters];
@@ -58,6 +59,7 @@ export function NewEntry({ route, navigation }) {
                   <View style={{ flex: 1, flexDirection: "row" }}>
                     <Input
                       w="300"
+                      color="black"
                       style={styles.inputQR}
                       onChangeText={(text) => {
                         let temp = [...parameters];
@@ -87,6 +89,7 @@ export function NewEntry({ route, navigation }) {
                   <View style={{ flex: 1, flexDirection: "row" }}>
                     <Input
                       w="300"
+                      color="black"
                       style={styles.inputQR}
                       onChangeText={(text) => {
                         let temp = [...parameters];
@@ -116,6 +119,7 @@ export function NewEntry({ route, navigation }) {
                   <View style={{ flex: 1, flexDirection: "row" }}>
                     <Input
                       w="300"
+                      color="black"
                       style={styles.input}
                       onChangeText={(text) => {
                         let temp = [...parameters];
@@ -235,7 +239,6 @@ const styles = StyleSheet.create({
     height: 40,
     width: 300,
     paddingHorizontal: 5,
-    backgroundColor: "white",
     marginBottom: 5,
   },
   inputQR: {
