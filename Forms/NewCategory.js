@@ -26,6 +26,29 @@ export function NewCategory({ route, navigation }) {
     setShowIconPicker(false);
   };
 
+  const icons = [
+    "tv",
+    "alarm",
+    "cube",
+    "fast-food",
+    "easel",
+    "image",
+    "musical-notes",
+    "print",
+    "shirt",
+    "tennisball",
+    "thermometer",
+    "train",
+    "nutrition",
+    "desktop",
+    "beer",
+    "snow",
+    "logo-usd",
+    "pizza",
+    "man",
+    "color-filter",
+  ];
+
   return (
     <Box height="100%" bg="background.800">
       <Center>
@@ -36,7 +59,8 @@ export function NewCategory({ route, navigation }) {
                 Name:
               </Text>
               <Input
-                w="300"
+                ml="5%"
+                mr="5%"
                 color="black"
                 bg="white"
                 style={styles.input}
@@ -48,29 +72,25 @@ export function NewCategory({ route, navigation }) {
                 _focus={{ backgroundColor: "white" }}
               />
             </Box>
-            <Box width="90%" mt="2">
+            <Box width="100%" mt="4 ">
               <Text color="white" fontSize="xl">
                 Icon:
               </Text>
               <IconPicker
                 showIconPicker={showIconPicker}
                 toggleIconPicker={() => setShowIconPicker(!showIconPicker)}
-                iconDetails={[{ family: "Ionicons", icons: ["add", "alarm"] }]}
+                iconDetails={[
+                  {
+                    family: "Ionicons",
+                    icons: icons,
+                  },
+                ]}
                 content={
-                  <HStack space={2}>
-                    <Center w="40" mt="1">
-                      <Box height="8">
-                        <Icon as={Ionicons} color="white" size="xl" name={icon} />
-                      </Box>
-                    </Center>
-                    <Center w="40" bg="white" mt="1">
-                      <Box height="8">
-                        <Text size="16" color="black">
-                          Choose Icon
-                        </Text>
-                      </Box>
-                    </Center>
-                  </HStack>
+                  <Center w="100%" mt="1">
+                    <Box height="8">
+                      <Icon as={Ionicons} color="white" size="2xl" name={icon} />
+                    </Box>
+                  </Center>
                 }
                 onSelect={onSelect}
               />
@@ -211,7 +231,7 @@ export function NewCategory({ route, navigation }) {
   function addNewCategoryFunction(name) {
     console.log(parameters);
     dispatch(nextId());
-    dispatch(addNewCategory(nextID, name, parameters, "add"));
+    dispatch(addNewCategory(nextID, name, parameters, icon));
     navigation.goBack();
   }
 
