@@ -68,11 +68,10 @@ export function NewCategory({ route, navigation }) {
                 value={name}
                 placeholder="Name"
                 variant="filled"
-                focusOutlineColor="white"
                 _focus={{ backgroundColor: "white" }}
               />
             </Box>
-            <Box width="100%" mt="4 ">
+            <Box width="100%" mt="4">
               <Text color="white" fontSize="xl">
                 Icon:
               </Text>
