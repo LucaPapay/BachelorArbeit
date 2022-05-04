@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, TextInput, StyleSheet, FlatList, Modal } from "react-native";
+import { Text, View, TextInput, StyleSheet, FlatList } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { addEntryToItemGroup, nextId } from "../redux/actions";
 import { Parameter } from "../Entities/DataStorage";
@@ -25,12 +25,19 @@ export function NewEntry({ route, navigation }) {
 
   return (
     <View style={{ flex: 1 }}>
-      {getModal()}
       <View style={{ flex: 8, justifyContent: "flex-start", alignItems: "center", marginTop: 20 }}>
         <Text style={styles.header}></Text>
         <View style={styles.formLine}>
           <Text style={styles.header}>Name:</Text>
-          <TextInput style={styles.input} onChangeText={onChangeName} value={name} placeholder="Name" />
+          <Input
+            w="300"
+            color="black"
+            bg="white"
+            style={styles.input}
+            onChangeText={onChangeName}
+            value={name}
+            placeholder="Name"
+          />
         </View>
         <FlatList
           data={parameters}
@@ -44,6 +51,7 @@ export function NewEntry({ route, navigation }) {
                     <Input
                       w="300"
                       color="black"
+                      bg={"white"}
                       style={styles.input}
                       onChangeText={(text) => {
                         let temp = [...parameters];
@@ -152,52 +160,6 @@ export function NewEntry({ route, navigation }) {
     </View>
   );
 
-  function getModal() {
-    return (
-      <Modal
-        animationType="slide"
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.header}>New Parameter</Text>
-            <View style={styles.formLine}>
-              <Text style={styles.header}>Name</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={setParameterName}
-                value={parameterName}
-                placeholder="Parameter Name"
-              />
-            </View>
-            <View style={styles.formLine}>
-              <Text style={styles.header}>Type:</Text>
-              <Picker
-                style={{ width: 300, marginBottom: 5, height: 50, marginTop: -10 }}
-                selectedValue={parameterType}
-                prompt="Parameter Type"
-                onValueChange={(itemValue, itemIndex) => setParameterType(itemValue)}
-              >
-                <Picker.Item label="Text" value="text" />
-                <Picker.Item label="Number" value="number" />
-                <Picker.Item label="QR Code" value="qr" />
-                <Picker.Item label="Ean 8" value="ean-8" />
-                <Picker.Item label="Ean 13" value="ean-13" />
-              </Picker>
-            </View>
-            <View style={[styles.btnWrapper, { marginTop: 100 }]}>
-              <Button color="green" title="save" onPress={() => closeModalAndAddNewParameter()}></Button>
-              <Button title="close" onPress={() => closeAndDiscardModal()}></Button>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    );
-  }
-
   function setParametersViaEvent(eventData) {
     event.remove();
     let temp = [...parameters];
@@ -218,19 +180,6 @@ export function NewEntry({ route, navigation }) {
     dispatch(nextId());
     dispatch(addEntryToItemGroup(nextID, name, parentIds, parameters));
     navigation.goBack();
-  }
-
-  function closeModalAndAddNewParameter() {
-    addParameter(parameterName, parameterType);
-    setParameterName("");
-    setParameterType("");
-    setModalVisible(false);
-  }
-
-  function closeAndDiscardModal() {
-    setParameterName("");
-    setParameterType("");
-    setModalVisible(false);
   }
 }
 

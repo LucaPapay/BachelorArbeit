@@ -5,3 +5,4 @@ export const REMOVE_FROM_INVENTORIES = "REMOVE_FROM_INVENTORIES";
 export const INIT = "INIT";
 export const NEXT_ID = "NEXT_ID";
 export const ADD_SUB_ITEMGROUP = "ADD_SUB_ITEMGROUP";
+export const ADD_NEW_CATEGORY = "ADD_NEW_CATEGORY";

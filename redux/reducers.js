@@ -1,9 +1,17 @@
-import { ADD_ITEMGROUP_TO_INVENTORIES, ADD_TO_INVENTORIES, INIT, NEXT_ID, ADD_SUB_ITEMGROUP } from "./types";
-import { InventoryItemGroup, InventoryEntry } from "../Entities/DataStorage";
+import {
+  ADD_ITEMGROUP_TO_INVENTORIES,
+  ADD_TO_INVENTORIES,
+  INIT,
+  NEXT_ID,
+  ADD_SUB_ITEMGROUP,
+  ADD_NEW_CATEGORY,
+} from "./types";
+import { InventoryItemGroup, InventoryEntry, Category } from "../Entities/DataStorage";
 
 const initalState = {
   data: [],
   idCounter: 1,
+  categories: [],
 };
 
 function setInitial(state) {
@@ -11,7 +19,7 @@ function setInitial(state) {
     ...state,
     data: [],
     idCounter: 1,
-    state: null,
+    categories: [],
   };
 }
 
@@ -132,6 +140,14 @@ function addSubItemGroup(state, action) {
   }
 }
 
+function addNewCategory(state, action) {
+  let newCategory = new Category(action.name, action.id, action.parameters, action.iconName);
+  return {
+    ...state,
+    categories: [...state.categories, newCategory],
+  };
+}
+
 function reducer(state = initalState, action) {
   switch (action.type) {
     case INIT:
@@ -144,6 +160,8 @@ function reducer(state = initalState, action) {
       return addSubItemGroup(state, action);
     case NEXT_ID:
       return nextId(state);
+    case ADD_NEW_CATEGORY:
+      return addNewCategory(state, action);
     default:
       return state;
   }
