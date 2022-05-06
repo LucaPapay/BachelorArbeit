@@ -25,4 +25,13 @@ class Parameter {
   }
 }
 
-export { InventoryItemGroup, InventoryEntry, Parameter };
+class Category {
+  constructor(name, id, parameters, icon) {
+    this.name = name;
+    this.id = id;
+    this.parameters = parameters;
+    this.icon = icon;
+  }
+}
+
+export { InventoryItemGroup, InventoryEntry, Parameter, Category };

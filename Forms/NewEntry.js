@@ -1,155 +1,181 @@
 import React, { useState } from "react";
-import { Text, View, TextInput, StyleSheet, FlatList, Modal } from "react-native";
+import { StyleSheet, FlatList, Modal, DeviceEventEmitter } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { addEntryToItemGroup, nextId } from "../redux/actions";
 import { Parameter } from "../Entities/DataStorage";
-import Button from "../Components/Button";
 import { Picker } from "@react-native-picker/picker";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { DeviceEventEmitter } from "react-native";
-import { Input } from "native-base";
+import { Input, Box, Center, VStack, Button, Text, HStack } from "native-base";
 
 export function NewEntry({ route, navigation }) {
   const { parentIds } = route.params;
+
   const [name, onChangeName] = React.useState("");
   const [parameters, setParameters] = useState([]);
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [parameterName, setParameterName] = React.useState("");
-  const [parameterType, setParameterType] = React.useState("");
+  const [modalVisible, setModalVisible] = useState(true);
+  const [choosenCategory, setCategory] = React.useState("");
 
   const dispatch = useDispatch();
   let nextID = useSelector((state) => state.idCounter);
+  let categories = useSelector((state) => state.categories);
 
   let event = null;
 
   return (
-    <View style={{ flex: 1 }}>
+    <Box height="100%" bg="background.800">
+      <Center>
+        <VStack>
+          <Box height="15%" mt="5">
+            <Text color="white" fontSize="xl">
+              Name:
+            </Text>
+            <Input
+              ml="5%"
+              mr="5%"
+              color="black"
+              bg="white"
+              style={styles.input}
+              onChangeText={onChangeName}
+              value={name}
+              placeholder="Name"
+              variant="filled"
+              _focus={{ backgroundColor: "white" }}
+            />
+          </Box>
+          <Box height="65%">
+            <FlatList
+              data={parameters}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item, index }) => {
+                return (
+                  <Box mb="2" w="300">
+                    <Text color="white" fontSize="xl">
+                      {item.name}
+                    </Text>
+                    {item.type === "text" ? (
+                      <Box>
+                        <Input
+                          ml="5%"
+                          mr="5%"
+                          color="black"
+                          bg="white"
+                          style={styles.input}
+                          variant="filled"
+                          _focus={{ backgroundColor: "white" }}
+                          onChangeText={(text) => {
+                            let temp = [...parameters];
+                            temp[index].value = text;
+                            setParameters(temp);
+                          }}
+                          value={parameters[index].value}
+                          keyboardType={"default"}
+                          placeholder={item.name}
+                        />
+                      </Box>
+                    ) : item.type === "ean-8" || item.type === "ean-13" ? (
+                      <Box>
+                        <Input
+                          ml="5%"
+                          mr="5%"
+                          color="black"
+                          bg="white"
+                          style={styles.input}
+                          variant="filled"
+                          _focus={{ backgroundColor: "white" }}
+                          onChangeText={(text) => {
+                            let temp = [...parameters];
+                            temp[index].value = text;
+                            setParameters(temp);
+                          }}
+                          keyboardType="numeric"
+                          value={parameters[index].value}
+                          placeholder={item.name}
+                        />
+                        <Ionicons
+                          name="barcode-outline"
+                          size={35}
+                          color="white"
+                          onPress={() => {
+                            event = DeviceEventEmitter.addListener("event.codeScanned", (eventData) =>
+                              setParametersViaEvent(eventData)
+                            );
+                            navigation.navigate("Form Scanner", {
+                              typeToScan: item.type,
+                              index: index,
+                            });
+                          }}
+                        />
+                      </Box>
+                    ) : item.type === "qr" ? (
+                      <Box>
+                        <Input
+                          ml="5%"
+                          mr="5%"
+                          color="black"
+                          bg="white"
+                          style={styles.input}
+                          variant="filled"
+                          _focus={{ backgroundColor: "white" }}
+                          onChangeText={(text) => {
+                            let temp = [...parameters];
+                            temp[index].value = text;
+                            setParameters(temp);
+                          }}
+                          keyboardType="numeric"
+                          value={parameters[index].value}
+                          placeholder={item.name}
+                        />
+                        <Ionicons
+                          name="qr-code-outline"
+                          size={35}
+                          color="white"
+                          onPress={() => {
+                            event = DeviceEventEmitter.addListener("event.codeScanned", (eventData) =>
+                              setParametersViaEvent(eventData)
+                            );
+                            navigation.navigate("Form Scanner", {
+                              typeToScan: item.type,
+                              index: index,
+                            });
+                          }}
+                        />
+                      </Box>
+                    ) : (
+                      <Box>
+                        <Input
+                          ml="5%"
+                          mr="5%"
+                          color="black"
+                          bg="white"
+                          style={styles.input}
+                          variant="filled"
+                          _focus={{ backgroundColor: "white" }}
+                          onChangeText={(text) => {
+                            let temp = [...parameters];
+                            temp[index].value = text;
+                            setParameters(temp);
+                          }}
+                          value={parameters[index].value}
+                          keyboardType={"numeric"}
+                          placeholder={item.name}
+                        />
+                      </Box>
+                    )}
+                  </Box>
+                );
+              }}
+            />
+          </Box>
+          <Box height="15%">
+            <Button width="100%" height="12" bg="green.500" onPress={() => addNewEntryToItemGroup(name)}>
+              Save
+            </Button>
+          </Box>
+        </VStack>
+      </Center>
       {getModal()}
-      <View style={{ flex: 8, justifyContent: "flex-start", alignItems: "center", marginTop: 20 }}>
-        <Text style={styles.header}></Text>
-        <View style={styles.formLine}>
-          <Text style={styles.header}>Name:</Text>
-          <TextInput style={styles.input} onChangeText={onChangeName} value={name} placeholder="Name" />
-        </View>
-        <FlatList
-          data={parameters}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item, index }) => {
-            return (
-              <View style={styles.formLine}>
-                <Text style={styles.header}>{item.name}</Text>
-                {item.type === "text" ? (
-                  <View style={{ flex: 1, flexDirection: "row" }}>
-                    <Input
-                      w="300"
-                      color="black"
-                      style={styles.input}
-                      onChangeText={(text) => {
-                        let temp = [...parameters];
-                        temp[index].value = text;
-                        setParameters(temp);
-                      }}
-                      value={parameters[index].value}
-                      keyboardType={"default"}
-                      placeholder={item.name}
-                    />
-                  </View>
-                ) : item.type === "ean-8" || item.type === "ean-13" ? (
-                  <View style={{ flex: 1, flexDirection: "row" }}>
-                    <Input
-                      w="300"
-                      color="black"
-                      style={styles.inputQR}
-                      onChangeText={(text) => {
-                        let temp = [...parameters];
-                        temp[index].value = text;
-                        setParameters(temp);
-                      }}
-                      keyboardType="numeric"
-                      value={parameters[index].value}
-                      placeholder={item.name}
-                    />
-                    <Ionicons
-                      name="barcode-outline"
-                      size={35}
-                      color="#14213d"
-                      onPress={() => {
-                        event = DeviceEventEmitter.addListener("event.codeScanned", (eventData) =>
-                          setParametersViaEvent(eventData)
-                        );
-                        navigation.navigate("Form Scanner", {
-                          typeToScan: item.type,
-                          index: index,
-                        });
-                      }}
-                    />
-                  </View>
-                ) : item.type === "qr" ? (
-                  <View style={{ flex: 1, flexDirection: "row" }}>
-                    <Input
-                      w="300"
-                      color="black"
-                      style={styles.inputQR}
-                      onChangeText={(text) => {
-                        let temp = [...parameters];
-                        temp[index].value = text;
-                        setParameters(temp);
-                      }}
-                      keyboardType="numeric"
-                      value={parameters[index].value}
-                      placeholder={item.name}
-                    />
-                    <Ionicons
-                      name="qr-code-outline"
-                      size={35}
-                      color="#14213d"
-                      onPress={() => {
-                        event = DeviceEventEmitter.addListener("event.codeScanned", (eventData) =>
-                          setParametersViaEvent(eventData)
-                        );
-                        navigation.navigate("Form Scanner", {
-                          typeToScan: item.type,
-                          index: index,
-                        });
-                      }}
-                    />
-                  </View>
-                ) : (
-                  <View style={{ flex: 1, flexDirection: "row" }}>
-                    <Input
-                      w="300"
-                      color="black"
-                      style={styles.input}
-                      onChangeText={(text) => {
-                        let temp = [...parameters];
-                        temp[index].value = text;
-                        setParameters(temp);
-                      }}
-                      value={parameters[index].value}
-                      keyboardType={"numeric"}
-                      placeholder={item.name}
-                    />
-                  </View>
-                )}
-              </View>
-            );
-          }}
-        />
-      </View>
-      <View style={styles.btnWrapper}>
-        <Button paddingHorizontal={16} title="Amount" onPress={() => addParameter("Amount", "number")}></Button>
-        <Button paddingHorizontal={16} title="Unit" onPress={() => addParameter("Unit", "text")}></Button>
-        <Button paddingHorizontal={16} title="EAN-8" onPress={() => addParameter("EAN-8", "ean-8")}></Button>
-        <Button paddingHorizontal={16} title="EAN-13" onPress={() => addParameter("EAN-13", "ean-13")}></Button>
-      </View>
-      <View style={styles.btnWrapper}>
-        <Button width="90%" title="+ new Parameter" onPress={() => setModalVisible(true)}></Button>
-      </View>
-      <View style={styles.btnWrapper}>
-        <Button width="90%" color="green" title="Save" onPress={() => addNewEntryToItemGroup(name)}></Button>
-      </View>
-    </View>
+    </Box>
   );
 
   function getModal() {
@@ -161,41 +187,49 @@ export function NewEntry({ route, navigation }) {
           setModalVisible(!modalVisible);
         }}
       >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.header}>New Parameter</Text>
-            <View style={styles.formLine}>
-              <Text style={styles.header}>Name</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={setParameterName}
-                value={parameterName}
-                placeholder="Parameter Name"
-              />
-            </View>
-            <View style={styles.formLine}>
-              <Text style={styles.header}>Type:</Text>
-              <Picker
-                style={{ width: 300, marginBottom: 5, height: 50, marginTop: -10 }}
-                selectedValue={parameterType}
-                prompt="Parameter Type"
-                onValueChange={(itemValue, itemIndex) => setParameterType(itemValue)}
-              >
-                <Picker.Item label="Text" value="text" />
-                <Picker.Item label="Number" value="number" />
-                <Picker.Item label="QR Code" value="qr" />
-                <Picker.Item label="Ean 8" value="ean-8" />
-                <Picker.Item label="Ean 13" value="ean-13" />
-              </Picker>
-            </View>
-            <View style={[styles.btnWrapper, { marginTop: 100 }]}>
-              <Button color="green" title="save" onPress={() => closeModalAndAddNewParameter()}></Button>
-              <Button title="close" onPress={() => closeAndDiscardModal()}></Button>
-            </View>
-          </View>
-        </View>
+        <Box height="100%" bg="background.800">
+          <Center>
+            <VStack mt="70">
+              <Text style={styles.header}>Choose Entry Category</Text>
+              <Box mt="50" style={styles.formLine}>
+                <Text style={styles.header}>Categories:</Text>
+                <Picker
+                  selectedValue={choosenCategory}
+                  prompt="Parameter Type"
+                  onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
+                >
+                  {categories.map((item, index) => {
+                    return <Picker.Item color="white" label={item.name} value={item} key={index} />;
+                  })}
+                </Picker>
+              </Box>
+              <Box>
+                <HStack>
+                  <Button
+                    width="40"
+                    height={12}
+                    marginX="1"
+                    bg="green.500"
+                    onPress={() => closeModalAndSetParameters()}
+                  >
+                    Select
+                  </Button>
+                  <Button width="40" height={12} marginX="1" onPress={() => navigation.goBack()}>
+                    Back
+                  </Button>
+                </HStack>
+              </Box>
+            </VStack>
+          </Center>
+        </Box>
       </Modal>
     );
+  }
+
+  function closeModalAndSetParameters() {
+    console.log(choosenCategory.parameters);
+    setParameters(choosenCategory.parameters);
+    setModalVisible(false);
   }
 
   function setParametersViaEvent(eventData) {
@@ -218,19 +252,6 @@ export function NewEntry({ route, navigation }) {
     dispatch(nextId());
     dispatch(addEntryToItemGroup(nextID, name, parentIds, parameters));
     navigation.goBack();
-  }
-
-  function closeModalAndAddNewParameter() {
-    addParameter(parameterName, parameterType);
-    setParameterName("");
-    setParameterType("");
-    setModalVisible(false);
-  }
-
-  function closeAndDiscardModal() {
-    setParameterName("");
-    setParameterType("");
-    setModalVisible(false);
   }
 }
 

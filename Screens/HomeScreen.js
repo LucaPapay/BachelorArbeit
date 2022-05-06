@@ -1,9 +1,15 @@
-import { Text, View, Button } from "react-native";
+import { Box, Button, Center, VStack } from "native-base";
 
-export function HomeScreen() {
+export function HomeScreen({ navigation }) {
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Hello!</Text>
-    </View>
+    <Box height="100%" bg="background.800">
+      <Center>
+        <VStack mt={8}>
+          <Button height={12} width="80" onPress={() => navigation.navigate("New Category")}>
+            New Category
+          </Button>
+        </VStack>
+      </Center>
+    </Box>
   );
 }
