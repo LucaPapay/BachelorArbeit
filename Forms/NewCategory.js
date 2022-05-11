@@ -228,7 +228,6 @@ export function NewCategory({ route, navigation }) {
   }
 
   function addNewCategoryFunction(name) {
-    console.log(parameters);
     dispatch(nextId());
     dispatch(addNewCategory(nextID, name, parameters, icon));
     navigation.goBack();

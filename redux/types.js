@@ -6,3 +6,4 @@ export const INIT = "INIT";
 export const NEXT_ID = "NEXT_ID";
 export const ADD_SUB_ITEMGROUP = "ADD_SUB_ITEMGROUP";
 export const ADD_NEW_CATEGORY = "ADD_NEW_CATEGORY";
+export const EDIT_ITEMGROUP_ENTRY = "EDIT_ITEMGROUP_ENTRY";

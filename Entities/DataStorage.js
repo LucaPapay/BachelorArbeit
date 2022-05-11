@@ -9,11 +9,12 @@ class InventoryItemGroup {
 }
 
 class InventoryEntry {
-  constructor(name, id, parentIds, parameters) {
+  constructor(name, id, parentIds, parameters, icon) {
     this.id = id;
     this.name = name;
     this.parentIds = parentIds;
     this.parameters = parameters;
+    this.icon = icon;
   }
 }
 

@@ -227,7 +227,6 @@ export function NewEntry({ route, navigation }) {
   }
 
   function closeModalAndSetParameters() {
-    console.log(choosenCategory.parameters);
     setParameters(choosenCategory.parameters);
     setModalVisible(false);
   }
@@ -250,7 +249,7 @@ export function NewEntry({ route, navigation }) {
 
   function addNewEntryToItemGroup(name) {
     dispatch(nextId());
-    dispatch(addEntryToItemGroup(nextID, name, parentIds, parameters));
+    dispatch(addEntryToItemGroup(nextID, name, parentIds, parameters, choosenCategory.icon));
     navigation.goBack();
   }
 }
