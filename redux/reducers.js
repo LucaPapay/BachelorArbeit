@@ -6,13 +6,16 @@ import {
   ADD_SUB_ITEMGROUP,
   ADD_NEW_CATEGORY,
   EDIT_ITEMGROUP_ENTRY,
+  ADD_LOW_STOCK_ENTRY,
+  DELETE_LOW_STOCK_ENTRY,
 } from "./types";
-import { InventoryItemGroup, InventoryEntry, Category } from "../Entities/DataStorage";
+import { InventoryItemGroup, InventoryEntry, Category, LowStockEntry } from "../Entities/DataStorage";
 
 const initalState = {
   data: [],
   idCounter: 1,
   categories: [],
+  lowStockEntrys: [],
 };
 
 function setInitial(state) {
@@ -21,6 +24,7 @@ function setInitial(state) {
     data: [],
     idCounter: 1,
     categories: [],
+    lowStockEntrys: [],
   };
 }
 
@@ -194,6 +198,25 @@ function addNewCategory(state, action) {
   };
 }
 
+function addNewLowStockEntry(state, action) {
+  let newLowStockEntry = new LowStockEntry(action.entryName, action.entryId, action.entryParentIds);
+  if (state.lowStockEntrys.some((e) => e.entryId === action.entryId)) {
+    return state;
+  } else {
+    return {
+      ...state,
+      lowStockEntrys: [...state.lowStockEntrys, newLowStockEntry],
+    };
+  }
+}
+
+function deleteLowStockEntry(state, action) {
+  return {
+    ...state,
+    lowStockEntrys: state.lowStockEntrys.filter((e) => e.entryId !== action.entryId),
+  };
+}
+
 function reducer(state = initalState, action) {
   switch (action.type) {
     case INIT:
@@ -210,6 +233,10 @@ function reducer(state = initalState, action) {
       return addNewCategory(state, action);
     case EDIT_ITEMGROUP_ENTRY:
       return editItemGroupEntry(state, action);
+    case ADD_LOW_STOCK_ENTRY:
+      return addNewLowStockEntry(state, action);
+    case DELETE_LOW_STOCK_ENTRY:
+      return deleteLowStockEntry(state, action);
     default:
       return state;
   }

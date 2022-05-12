@@ -2,11 +2,13 @@ import { Box, Text, HStack, VStack, Center, Button } from "native-base";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { editItemGroupEntry } from "../redux/actions";
+import { editItemGroupEntry, addLowStockEntry, deleteLowStockEntry } from "../redux/actions";
 
 export function EntryEditAmountView({ route, navigation }) {
   const { name, parentIds, amount, entry } = route.params;
   const dispatch = useDispatch();
+  let threshold = getThreshold();
+  console.log(threshold);
 
   const [tempAmount, setTempAmount] = useState(parseInt(amount));
 
@@ -37,6 +39,9 @@ export function EntryEditAmountView({ route, navigation }) {
               />
             </HStack>
           </Center>
+          <Center>
+            <Text fontSize={"2xl"}>{threshold}</Text>
+          </Center>
           <Box>
             <Button mt="10" height="12" bg="green.500" width="300" onPress={() => editAmount()}>
               Save
@@ -53,7 +58,22 @@ export function EntryEditAmountView({ route, navigation }) {
         parameter.value = tempAmount;
       }
       dispatch(editItemGroupEntry(entry.id, entry));
+      if (tempAmount < parseInt(threshold)) {
+        dispatch(addLowStockEntry(entry.name, entry.id, entry.parentIds));
+      } else {
+        dispatch(deleteLowStockEntry(entry.id));
+      }
       navigation.goBack();
     });
+  }
+
+  function getThreshold() {
+    let temp = 0;
+    entry.parameters.forEach((parameter) => {
+      if (parameter.name === "Threshold") {
+        temp = parameter.value;
+      }
+    });
+    return temp;
   }
 }

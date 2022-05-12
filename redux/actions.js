@@ -6,6 +6,8 @@ import {
   ADD_SUB_ITEMGROUP,
   ADD_NEW_CATEGORY,
   EDIT_ITEMGROUP_ENTRY,
+  ADD_LOW_STOCK_ENTRY,
+  DELETE_LOW_STOCK_ENTRY,
 } from "./types";
 
 export const addItemGroupToInventories = (entry, id) => ({
@@ -38,6 +40,16 @@ export const editItemGroupEntry = (id, editedEntry) => ({
   type: EDIT_ITEMGROUP_ENTRY,
   id: id,
   editedEntry: editedEntry,
+});
+export const addLowStockEntry = (entryName, entryId, entryParentIds) => ({
+  type: ADD_LOW_STOCK_ENTRY,
+  entryId: entryId,
+  entryName: entryName,
+  entryParentIds: entryParentIds,
+});
+export const deleteLowStockEntry = (entryId) => ({
+  type: DELETE_LOW_STOCK_ENTRY,
+  entryId: entryId,
 });
 
 export const initalState = () => ({ type: INIT });

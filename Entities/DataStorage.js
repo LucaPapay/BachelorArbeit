@@ -35,4 +35,12 @@ class Category {
   }
 }
 
-export { InventoryItemGroup, InventoryEntry, Parameter, Category };
+class LowStockEntry {
+  constructor(entryName, entryId, entryParentIds) {
+    this.entryName = entryName;
+    this.entryId = entryId;
+    this.entryParentIds = entryParentIds;
+  }
+}
+
+export { InventoryItemGroup, InventoryEntry, Parameter, Category, LowStockEntry };

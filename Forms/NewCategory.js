@@ -134,7 +134,7 @@ export function NewCategory({ route, navigation }) {
               <VStack w="100%">
                 <Center>
                   <HStack>
-                    <Button marginX="1" width="20%" height={12} onPress={() => addParameter("Amount", "number")}>
+                    <Button marginX="1" width="20%" height={12} onPress={() => addAmount(parameters.length)}>
                       Amount
                     </Button>
                     <Button marginX="1" width="20%" height={12} onPress={() => addParameter("Unit", "text")}>
@@ -221,9 +221,21 @@ export function NewCategory({ route, navigation }) {
     );
   }
 
+  function addAmount(id) {
+    addParameterWithId("Amount", "number", id);
+    addParameterWithId("Threshold", "number", id + 1);
+  }
+
+  function addParameterWithId(name, type, id) {
+    let newParameter = new Parameter(name, type, "");
+    newParameter.id = id;
+    setParameters((parameters) => [...parameters, newParameter]);
+  }
+
   function addParameter(name, type) {
     let newParameter = new Parameter(name, type, "");
-    newParameter.id = parameters.length;
+    let temp = parameters;
+    newParameter.id = temp.length;
     setParameters((parameters) => [...parameters, newParameter]);
   }
 
