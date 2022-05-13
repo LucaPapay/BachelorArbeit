@@ -8,7 +8,6 @@ export function EntryEditAmountView({ route, navigation }) {
   const { name, parentIds, amount, entry } = route.params;
   const dispatch = useDispatch();
   let threshold = getThreshold();
-  console.log(threshold);
 
   const [tempAmount, setTempAmount] = useState(parseInt(amount));
 
@@ -63,8 +62,8 @@ export function EntryEditAmountView({ route, navigation }) {
       } else {
         dispatch(deleteLowStockEntry(entry.id));
       }
-      navigation.goBack();
     });
+    navigation.goBack();
   }
 
   function getThreshold() {
