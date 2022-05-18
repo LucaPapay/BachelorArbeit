@@ -16,7 +16,20 @@ export function ItemGroupsStackRouter() {
   const Stack = createStackNavigator();
   return (
     <NavigationContainer independent={true}>
-      <Stack.Navigator initialRouteName="Item Groups">
+      <Stack.Navigator
+        initialRouteName="Item Groups"
+        screenOptions={({ route }) => ({
+          headerStyle: {
+            height: 80,
+            backgroundColor: "#1f2937",
+            elevation: 0, // remove shadow on Android
+            shadowOpacity: 0, // remove shadow on iOS
+            borderBottomWidth: 0, // Just in case.
+          },
+          headerTitleStyle: { color: "#ffffff", fontSize: 20 },
+          headerTintColor: "#06b6d4",
+        })}
+      >
         <Stack.Screen name="Item Groups" component={ItemGroupsScreen} />
         <Stack.Screen
           name="Sub Item Group"
