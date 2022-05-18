@@ -5,13 +5,17 @@ import {
   NEXT_ID,
   ADD_SUB_ITEMGROUP,
   ADD_NEW_CATEGORY,
+  EDIT_ITEMGROUP_ENTRY,
+  ADD_LOW_STOCK_ENTRY,
+  DELETE_LOW_STOCK_ENTRY,
 } from "./types";
-import { InventoryItemGroup, InventoryEntry, Category } from "../Entities/DataStorage";
+import { InventoryItemGroup, InventoryEntry, Category, LowStockEntry } from "../Entities/DataStorage";
 
 const initalState = {
   data: [],
   idCounter: 1,
   categories: [],
+  lowStockEntrys: [],
 };
 
 function setInitial(state) {
@@ -20,6 +24,7 @@ function setInitial(state) {
     data: [],
     idCounter: 1,
     categories: [],
+    lowStockEntrys: [],
   };
 }
 
@@ -38,11 +43,56 @@ function addNewItemGroup(state, action) {
   };
 }
 
+const swapMatchingEntry = (data, action) => {
+  return data.map((dataEntry) => (dataEntry.id === action.id ? action.editedEntry : dataEntry));
+};
+
+const recursiveEditInventoryEntry = (subItemGroups, parentIds, action) => {
+  const recur = (subItemGroups, parentIds, action) => {
+    //found parent
+    if (parentIds.length === 1) {
+      return subItemGroups.map((element) =>
+        element.id === parentIds[0]
+          ? {
+              ...element,
+              data: swapMatchingEntry(element.data, action),
+            }
+          : element
+      );
+    }
+    const currentParent = parentIds[0];
+    //recursively traverse n-tree
+    return subItemGroups.map((element) =>
+      element.id === currentParent
+        ? {
+            ...element,
+            subItemGroups: recursiveEditInventoryEntry(element.subItemGroups, parentIds.slice(1), action),
+          }
+        : element
+    );
+  };
+  return recur(subItemGroups, parentIds, action);
+};
+
+function editItemGroupEntry(state, action) {
+  let parentIds = action.editedEntry.parentIds;
+  return {
+    ...state,
+    data: recursiveEditInventoryEntry(state.data, parentIds, action),
+  };
+}
+
 const recursiveAddInventoryEntry = (subItemGroups, parentIds, action, parentIdsCopy) => {
   const recur = (subItemGroups, parentIds, action, parentIdsCopy) => {
     //found parent
     if (parentIds.length === 1) {
-      let newInventoryEntry = new InventoryEntry(action.newEntry, action.id, parentIdsCopy, action.parameters);
+      let newInventoryEntry = new InventoryEntry(
+        action.newEntry,
+        action.id,
+        parentIdsCopy,
+        action.parameters,
+        action.icon
+      );
       return subItemGroups.map((element) =>
         element.id === parentIds[0] ? { ...element, data: element.data.concat(newInventoryEntry) } : element
       );
@@ -64,7 +114,7 @@ const recursiveAddInventoryEntry = (subItemGroups, parentIds, action, parentIdsC
 function addNewEntryToItemGroup(state, action) {
   let parentIds = action.parentIds;
   if (parentIds.length === 1) {
-    let newEntry = new InventoryEntry(action.newEntry, action.id, action.parentIds, action.parameters);
+    let newEntry = new InventoryEntry(action.newEntry, action.id, action.parentIds, action.parameters, action.icon);
     return {
       ...state,
       data: state.data.map((item) => {
@@ -148,6 +198,25 @@ function addNewCategory(state, action) {
   };
 }
 
+function addNewLowStockEntry(state, action) {
+  let newLowStockEntry = new LowStockEntry(action.entryName, action.entryId, action.entryParentIds);
+  if (state.lowStockEntrys.some((e) => e.entryId === action.entryId)) {
+    return state;
+  } else {
+    return {
+      ...state,
+      lowStockEntrys: [...state.lowStockEntrys, newLowStockEntry],
+    };
+  }
+}
+
+function deleteLowStockEntry(state, action) {
+  return {
+    ...state,
+    lowStockEntrys: state.lowStockEntrys.filter((e) => e.entryId !== action.entryId),
+  };
+}
+
 function reducer(state = initalState, action) {
   switch (action.type) {
     case INIT:
@@ -162,6 +231,12 @@ function reducer(state = initalState, action) {
       return nextId(state);
     case ADD_NEW_CATEGORY:
       return addNewCategory(state, action);
+    case EDIT_ITEMGROUP_ENTRY:
+      return editItemGroupEntry(state, action);
+    case ADD_LOW_STOCK_ENTRY:
+      return addNewLowStockEntry(state, action);
+    case DELETE_LOW_STOCK_ENTRY:
+      return deleteLowStockEntry(state, action);
     default:
       return state;
   }

@@ -9,11 +9,12 @@ class InventoryItemGroup {
 }
 
 class InventoryEntry {
-  constructor(name, id, parentIds, parameters) {
+  constructor(name, id, parentIds, parameters, icon) {
     this.id = id;
     this.name = name;
     this.parentIds = parentIds;
     this.parameters = parameters;
+    this.icon = icon;
   }
 }
 
@@ -34,4 +35,12 @@ class Category {
   }
 }
 
-export { InventoryItemGroup, InventoryEntry, Parameter, Category };
+class LowStockEntry {
+  constructor(entryName, entryId, entryParentIds) {
+    this.entryName = entryName;
+    this.entryId = entryId;
+    this.entryParentIds = entryParentIds;
+  }
+}
+
+export { InventoryItemGroup, InventoryEntry, Parameter, Category, LowStockEntry };
