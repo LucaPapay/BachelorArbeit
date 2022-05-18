@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, Platform } from "react-native";
+import { StyleSheet, View, Platform } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import Barcode from "@kichiyaki/react-native-barcode-generator";
-import Button from "../Components/Button";
 import React, { useState } from "react";
+import { Text, Box, VStack, Center, Button, HStack } from "native-base";
 
 export default function ScannerResult({ route, navigation }) {
   const { scannedResult, type } = route.params;
@@ -18,7 +18,7 @@ export default function ScannerResult({ route, navigation }) {
 
   let code = <Text>kein bild vorhanden</Text>;
   if (trimmedType === "org.iso.QRCode" || trimmedType === "256") {
-    code = <QRCode style={{ marginBottom: 25 }} size={350} value={scanned} />;
+    code = <QRCode style={{ marginBottom: 25 }} size={250} value={scanned} />;
   } else if (trimmedType === "org.gs1.EAN-13" || trimmedType === "32") {
     code = <Barcode style={{ marginBottom: 25 }} format="EAN13" value={scanned} text={scanned}></Barcode>;
   } else if (trimmedType === "org.gs1.EAN-8" || trimmedType === "64") {
@@ -26,15 +26,48 @@ export default function ScannerResult({ route, navigation }) {
   }
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text style={styles.title}>Scanned:</Text>
-      <Text style={(styles.title, { marginBottom: 25 })}>{scanned}</Text>
-      <Text style={(styles.title, { marginBottom: 25 })}>Type: {trimmedType}</Text>
-      {code}
-      <Text style={(styles.title, { marginBottom: 25 })}>Item: {title}</Text>
-      <Button color="tomato" title="Lookup Code on API" onPress={() => lookup()} />
-    </View>
+    <Box height="100%" bg="background.800">
+      <VStack>
+        <Center>
+          <Text mt="5" fontSize="xl">
+            Scanned:
+          </Text>
+          <Text>{scanned}</Text>
+          <Text mt="2" fontSize="xl" mb="5">
+            Type: {trimmedType}
+          </Text>
+          {code}
+          <Text mt="2">Item: {title}</Text>
+          <HStack mt="2">
+            <Button width="40" height={12} marginX="1" onPress={() => lookup()}>
+              Lookup Code on API
+            </Button>
+            <Button width="40" height={12} marginX="1" onPress={() => gotoItem()}>
+              Goto Item Group
+            </Button>
+          </HStack>
+        </Center>
+      </VStack>
+    </Box>
   );
+
+  function gotoItem() {
+    let temp = scanned;
+    let inventoryString = temp.substring(0, temp.search("@"));
+    let type = temp.substring(temp.search("@") + 1, temp.search("#"));
+    let parentIds = temp.substring(temp.search("#") + 1).split(",");
+    console.log(inventoryString);
+    console.log(type);
+    console.log(parentIds);
+    parentIds = parentIds.map((i) => parseInt(i));
+
+    if (type === "e") {
+      parentIds.pop();
+    }
+
+    navigation.navigate("Sub Item Group", { parentIds: parentIds, name: "test" });
+    //navigation.navigate("Item Groups", { parentIds: parentids, shouldForward: true });
+  }
 
   function lookup() {
     fetch("https://api.upcitemdb.com/prod/trial/lookup?upc=" + scanned)

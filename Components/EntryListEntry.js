@@ -61,7 +61,7 @@ export default function EntryListEntry({ entry, parentIds }) {
           name="qr-code-outline"
           size={35}
           color="#14213d"
-          onPress={() => navigation.push("QR Code", { name: entry.name, parentIds: parentIds })}
+          onPress={() => navigation.push("QR Code", { name: entry.name, parentIds: parentIds, type: "e" })}
         />
         <Ionicons
           name="eye"
