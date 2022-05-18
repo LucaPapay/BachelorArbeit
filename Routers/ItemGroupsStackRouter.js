@@ -11,6 +11,7 @@ import { EntryCodeView } from "../Components/EntryCodeView";
 import FormScanner from "../Components/FormScanner";
 import { EntryDetails } from "../Components/EntryDetails";
 import { EntryEditAmountView } from "../Components/EntryEditAmountView";
+import { NewCategory } from "../Forms/NewCategory";
 
 export function ItemGroupsStackRouter() {
   const Stack = createStackNavigator();
@@ -44,6 +45,7 @@ export function ItemGroupsStackRouter() {
         <Stack.Screen name="Scanner" component={Scanner} />
         <Stack.Screen name="Scanner Result" component={ScannerResult} />
         <Stack.Screen name="Form Scanner" component={FormScanner} />
+        <Stack.Screen name="New Category" component={NewCategory} />
         <Stack.Screen
           name="Entry Details"
           component={EntryDetails}

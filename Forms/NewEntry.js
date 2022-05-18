@@ -14,7 +14,7 @@ export function NewEntry({ route, navigation }) {
   const [parameters, setParameters] = useState([]);
 
   const [modalVisible, setModalVisible] = useState(true);
-  const [choosenCategory, setCategory] = React.useState("");
+  const [choosenCategoryId, setCategoryId] = React.useState("");
 
   const dispatch = useDispatch();
   let nextID = useSelector((state) => state.idCounter);
@@ -194,12 +194,14 @@ export function NewEntry({ route, navigation }) {
               <Box mt="50" style={styles.formLine}>
                 <Text style={styles.header}>Categories:</Text>
                 <Picker
-                  selectedValue={choosenCategory}
-                  prompt="Parameter Type"
-                  onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
+                  style={{ color: "white" }}
+                  selectedValue={choosenCategoryId}
+                  prompt="Item Category"
+                  onValueChange={(itemValue, itemIndex) => setCategoryId(itemValue)}
+                  itemStyle={{ color: "white" }}
                 >
                   {categories.map((item, index) => {
-                    return <Picker.Item color="white" label={item.name} value={item} key={index} />;
+                    return <Picker.Item label={item.name} value={item.id} key={index} />;
                   })}
                 </Picker>
               </Box>
@@ -227,7 +229,8 @@ export function NewEntry({ route, navigation }) {
   }
 
   function closeModalAndSetParameters() {
-    setParameters(choosenCategory.parameters);
+    let found = categories.find((c) => c.id === choosenCategoryId);
+    setParameters(found.parameters);
     setModalVisible(false);
   }
 
@@ -241,15 +244,10 @@ export function NewEntry({ route, navigation }) {
     setParameters(temp);
   }
 
-  function addParameter(name, type) {
-    let newParameter = new Parameter(name, type, "");
-    newParameter.id = parameters.length;
-    setParameters((parameters) => [...parameters, newParameter]);
-  }
-
   function addNewEntryToItemGroup(name) {
+    let found = categories.find((c) => c.id === choosenCategoryId);
     dispatch(nextId());
-    dispatch(addEntryToItemGroup(nextID, name, parentIds, parameters, choosenCategory.icon));
+    dispatch(addEntryToItemGroup(nextID, name, parentIds, parameters, found.icon));
     navigation.goBack();
   }
 }
