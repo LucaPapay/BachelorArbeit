@@ -40,7 +40,7 @@ export default function EntryListEntry({ entry, parentIds }) {
               />
             </HStack>
             <Box ml="2">
-              {amount >= threshold ? (
+              {parseInt(amount) >= parseInt(threshold) ? (
                 <Text color="green.500">
                   {amount}/{threshold}
                 </Text>

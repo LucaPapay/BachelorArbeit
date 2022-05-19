@@ -5,7 +5,12 @@ import SubItemGroupListEntry from "../Components/SubItemGroupListEntry";
 import { Icon } from "native-base";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
+import { useDispatch } from "react-redux";
+import { addItemGroupToInventories, addNewCategory, addSubItemGroup, initalState, nextId } from "../redux/actions";
+
 export function ItemGroupsScreen({ navigation }) {
+  const dispatch = useDispatch();
+  //dispatch(initalState());
   let DATA = useSelector((state) => state.data);
   let categories = useSelector((state) => state.categories);
   let hasCategories = categories.length > 0;

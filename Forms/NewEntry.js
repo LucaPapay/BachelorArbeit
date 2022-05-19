@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, FlatList, Modal, DeviceEventEmitter } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { addEntryToItemGroup, nextId } from "../redux/actions";
+import { addEntryToItemGroup, nextId, addLowStockEntry } from "../redux/actions";
 import { Parameter } from "../Entities/DataStorage";
 import { Picker } from "@react-native-picker/picker";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -14,11 +14,12 @@ export function NewEntry({ route, navigation }) {
   const [parameters, setParameters] = useState([]);
 
   const [modalVisible, setModalVisible] = useState(true);
-  const [choosenCategoryId, setCategoryId] = React.useState("");
 
   const dispatch = useDispatch();
   let nextID = useSelector((state) => state.idCounter);
   let categories = useSelector((state) => state.categories);
+
+  const [choosenCategoryId, setCategoryId] = useState(categories[0].id);
 
   let event = null;
 
@@ -248,6 +249,28 @@ export function NewEntry({ route, navigation }) {
     let found = categories.find((c) => c.id === choosenCategoryId);
     dispatch(nextId());
     dispatch(addEntryToItemGroup(nextID, name, parentIds, parameters, found.icon));
+
+    let hasThreshold = false;
+    let threshold = 0;
+    let amount = 0;
+
+    parameters.forEach((e) => {
+      if (e.name === "Threshold") {
+        hasThreshold = true;
+        threshold = e.value;
+      }
+      if (e.name === "Amount") {
+        amount = e.value;
+      }
+    });
+
+    if (hasThreshold) {
+      if (parseInt(amount) < parseInt(threshold)) {
+        console.l;
+        dispatch(addLowStockEntry(name, nextID, parentIds));
+      }
+    }
+
     navigation.goBack();
   }
 }

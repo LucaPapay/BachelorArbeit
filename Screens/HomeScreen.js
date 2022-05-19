@@ -8,9 +8,6 @@ export function HomeScreen({ navigation }) {
           <Button height={12} width="80" onPress={() => navigation.navigate("New Category")}>
             New Category
           </Button>
-          <Button mt="5" height={12} width="80" onPress={() => navigation.navigate("New Category")}>
-            Goto item via QR Code
-          </Button>
         </VStack>
       </Center>
     </Box>
