@@ -9,6 +9,7 @@ import {
   ADD_LOW_STOCK_ENTRY,
   DELETE_LOW_STOCK_ENTRY,
   DELETE_ITEM_GROUP,
+  DELETE_ENTRY,
 } from "./types";
 
 export const addItemGroupToInventories = (entry, id) => ({
@@ -55,6 +56,12 @@ export const deleteLowStockEntry = (entryId) => ({
 
 export const deleteItemGroup = (id, parentIds) => ({
   type: DELETE_ITEM_GROUP,
+  id: id,
+  parentIds: parentIds,
+});
+
+export const deleteEntry = (id, parentIds) => ({
+  type: DELETE_ENTRY,
   id: id,
   parentIds: parentIds,
 });

@@ -17,7 +17,7 @@ export default function SubItemGroup({ entry, parentIds }) {
   const cancelRef = React.useRef(null);
   return (
     <>
-      <Box style={styles.item}>
+      <Box style={styles.item} h="20">
         <Pressable
           style={{ flex: 3 }}
           onPress={() => navigation.push("Sub Item Group", { parentIds: parentIds, name: entry.name })}
@@ -40,7 +40,7 @@ export default function SubItemGroup({ entry, parentIds }) {
       <AlertDialog leastDestructiveRef={cancelRef} isOpen={isOpen} onClose={onClose}>
         <AlertDialog.Content>
           <AlertDialog.CloseButton />
-          <AlertDialog.Header>Delete ItemGroup</AlertDialog.Header>
+          <AlertDialog.Header>Delete Item Group</AlertDialog.Header>
           <AlertDialog.Body>
             This will remove the item group aswell as all entrys contained. This action cannot be reversed.
           </AlertDialog.Body>

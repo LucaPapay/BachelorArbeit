@@ -268,6 +268,54 @@ function deleteItemGroup(state, action) {
   }
 }
 
+const recursiveDeleteEntry = (subItemGroups, parentIds, id) => {
+  const recur = (subItemGroups, parentIds, id) => {
+    //found parent
+    if (parentIds.length === 1) {
+      console.log("_----------_");
+      console.log(subItemGroups);
+      //TODO FIX DELETION
+      return subItemGroups;
+    }
+    const currentParent = parentIds[0];
+    //recursively traverse n-tree
+    return subItemGroups.map((element) =>
+      element.id === currentParent
+        ? {
+            ...element,
+            subItemGroups: recursiveDeleteEntry(element.subItemGroups, parentIds.slice(1), id),
+          }
+        : element
+    );
+  };
+  return recur(subItemGroups, parentIds, id);
+};
+
+function deleteEntry(state, action) {
+  let parentIds = action.parentIds;
+
+  if (parentIds.length === 1) {
+    return {
+      ...state,
+      data: state.data.map((item) => {
+        if (item.id != parentIds[0]) {
+          return item;
+        }
+        return {
+          ...item,
+          data: item.data.filter((e) => e.id !== action.id),
+        };
+      }),
+    };
+  } else {
+  }
+
+  return {
+    ...state,
+    data: recursiveDeleteEntry(state.data, parentIds, action.id),
+  };
+}
+
 function reducer(state = initalState, action) {
   switch (action.type) {
     case INIT:
@@ -290,6 +338,8 @@ function reducer(state = initalState, action) {
       return deleteLowStockEntry(state, action);
     case DELETE_ITEM_GROUP:
       return deleteItemGroup(state, action);
+    case DELETE_ENTRY:
+      return deleteEntry(state, action);
     default:
       return state;
   }
