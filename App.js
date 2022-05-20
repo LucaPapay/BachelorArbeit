@@ -39,8 +39,8 @@ export default function App() {
     <NativeBaseProvider theme={theme}>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
+          <StatusBar style="dark" backgroundColor="#1f2937" />
           <MainRouter></MainRouter>
-          <StatusBar style="auto" backgroundColor="#14213d" />
         </PersistGate>
       </Provider>
     </NativeBaseProvider>

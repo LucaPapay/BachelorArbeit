@@ -11,12 +11,26 @@ import { EntryCodeView } from "../Components/EntryCodeView";
 import FormScanner from "../Components/FormScanner";
 import { EntryDetails } from "../Components/EntryDetails";
 import { EntryEditAmountView } from "../Components/EntryEditAmountView";
+import { NewCategory } from "../Forms/NewCategory";
 
 export function ItemGroupsStackRouter() {
   const Stack = createStackNavigator();
   return (
     <NavigationContainer independent={true}>
-      <Stack.Navigator initialRouteName="Item Groups">
+      <Stack.Navigator
+        initialRouteName="Item Groups"
+        screenOptions={({ route }) => ({
+          headerStyle: {
+            height: 80,
+            backgroundColor: "#1f2937",
+            elevation: 0, // remove shadow on Android
+            shadowOpacity: 0, // remove shadow on iOS
+            borderBottomWidth: 0, // Just in case.
+          },
+          headerTitleStyle: { color: "#ffffff", fontSize: 20 },
+          headerTintColor: "#06b6d4",
+        })}
+      >
         <Stack.Screen name="Item Groups" component={ItemGroupsScreen} />
         <Stack.Screen
           name="Sub Item Group"
@@ -31,6 +45,7 @@ export function ItemGroupsStackRouter() {
         <Stack.Screen name="Scanner" component={Scanner} />
         <Stack.Screen name="Scanner Result" component={ScannerResult} />
         <Stack.Screen name="Form Scanner" component={FormScanner} />
+        <Stack.Screen name="New Category" component={NewCategory} />
         <Stack.Screen
           name="Entry Details"
           component={EntryDetails}

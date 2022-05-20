@@ -1,29 +1,31 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import QRCode from "react-native-qrcode-svg";
+import { Box, Center, Text, VStack } from "native-base";
 
 export function EntryCodeView({ route, navigation }) {
-  const { name, parentIds } = route.params;
+  const { name, parentIds, type } = route.params;
   let code = "";
   parentIds.forEach((element) => {
     code = code + element + ",";
   });
   code = code.slice(0, -1);
+  let displayCode = "inventory@" + type + "#" + code;
 
   return (
-    <View style={{ flex: 1, alignItems: "center" }}>
-      <Text style={styles.title}>{name}</Text>
-      <Text style={(styles.title, { marginBottom: 25 })}>{code}</Text>
-      <QRCode style={{ marginBottom: 25 }} size={350} value={code} />
-    </View>
+    <Box height="100%" bg="background.800" style={{ flex: 1, alignItems: "center" }}>
+      <Center>
+        <VStack>
+          <Center>
+            <Text fontSize="3xl" mt="10">
+              {name}
+            </Text>
+            <Text mb="10" mt="2">
+              {displayCode}
+            </Text>
+          </Center>
+          <QRCode style={{ marginBottom: 25 }} size={300} value={displayCode} />
+        </VStack>
+      </Center>
+    </Box>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 24,
-    color: "#14213d",
-    justifyContent: "flex-start",
-    marginTop: 30,
-    marginBottom: 55,
-  },
-});

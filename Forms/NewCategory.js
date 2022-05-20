@@ -175,11 +175,16 @@ export function NewCategory({ route, navigation }) {
         <Box height="100%" bg="background.800">
           <Center>
             <VStack mt="70">
-              <Text style={styles.header}>New Parameter</Text>
+              <Text fontSize="3xl">New Parameter</Text>
               <Box mt="50" style={styles.formLine}>
-                <Text style={styles.header}>Name</Text>
-                <TextInput
+                <Text style={styles.header}>Name:</Text>
+                <Input
+                  mt="2"
+                  color="black"
+                  bg="white"
                   style={styles.input}
+                  variant="filled"
+                  _focus={{ backgroundColor: "white" }}
                   onChangeText={setParameterName}
                   value={parameterName}
                   placeholder="Parameter Name"
@@ -188,16 +193,17 @@ export function NewCategory({ route, navigation }) {
               <Box style={styles.formLine}>
                 <Text style={styles.header}>Type:</Text>
                 <Picker
-                  style={{ width: 300, marginBottom: 5, height: 50, marginTop: -10 }}
+                  style={{ width: 300, marginBottom: 5, height: 50, marginTop: -10, color: "white" }}
                   selectedValue={parameterType}
                   prompt="Parameter Type"
                   onValueChange={(itemValue, itemIndex) => setParameterType(itemValue)}
+                  itemStyle={{ color: "white" }}
                 >
-                  <Picker.Item color="white" label="Text" value="text" />
-                  <Picker.Item color="white" label="Number" value="number" />
-                  <Picker.Item color="white" label="QR Code" value="qr" />
-                  <Picker.Item color="white" label="Ean 8" value="ean-8" />
-                  <Picker.Item color="white" label="Ean 13" value="ean-13" />
+                  <Picker.Item label="Text" value="text" />
+                  <Picker.Item label="Number" value="number" />
+                  <Picker.Item label="QR Code" value="qr" />
+                  <Picker.Item label="Ean 8" value="ean-8" />
+                  <Picker.Item label="Ean 13" value="ean-13" />
                 </Picker>
               </Box>
               <Box style={[styles.btnWrapper, { marginTop: 100 }]}>

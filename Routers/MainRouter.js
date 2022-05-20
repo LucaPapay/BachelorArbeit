@@ -17,10 +17,19 @@ export function MainRouter() {
           tabBarIcon: ({ focused, color, size }) => getTabIcons(route, focused, color, size),
           tabBarActiveTintColor: "#14213d",
           tabBarInactiveTintColor: "gray",
+          headerStyle: {
+            height: 80,
+            backgroundColor: "#1f2937",
+            elevation: 0, // remove shadow on Android
+            shadowOpacity: 0, // remove shadow on iOS
+            borderBottomWidth: 0, // Just in case.
+          },
+          headerTitleStyle: { color: "#ffffff", fontSize: 20 },
+          headerTintColor: "#06b6d4",
         })}
       >
-        <Tab.Screen name={"Home"} component={HomeScreenStackRouter} options={{ headerShown: false }} />
         <Tab.Screen name={"Item Groups"} component={ItemGroupsStackRouter} options={{ headerShown: false }} />
+        <Tab.Screen name={"Categories"} component={HomeScreenStackRouter} options={{ headerShown: false }} />
         <Tab.Screen name={"Low Stock"} component={LowStockStackRouter} options={{ headerShown: false }} />
         <Tab.Screen name="Debug" component={DebugScreen} />
       </Tab.Navigator>
@@ -31,8 +40,8 @@ export function MainRouter() {
 function getTabIcons(route, focused, color, size) {
   let iconName;
 
-  if (route.name === "Home") {
-    iconName = focused ? "ios-information-circle" : "ios-information-circle-outline";
+  if (route.name === "Categories") {
+    iconName = focused ? "apps" : "apps-outline";
   } else if (route.name === "Item Groups") {
     iconName = focused ? "file-tray-stacked" : "file-tray-stacked-outline";
   } else if (route.name === "Low Stock") {
