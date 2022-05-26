@@ -124,7 +124,7 @@ export default function EntryListEntry({ entry, parentIds }) {
 
 const styles = StyleSheet.create({
   item: {
-    backgroundColor: "#e5e5e5",
+    backgroundColor: "#f5f5f5",
     padding: 20,
     marginVertical: 8,
     borderRadius: 5,
