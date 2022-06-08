@@ -24,6 +24,9 @@ const theme = extendTheme({
     background: {
       800: "#1f2937",
     },
+    active: {
+      500: "#F66B0E",
+    },
     // Redefinig only one shade, rest of the color will remain same.
     amber: {
       400: "#d97706",

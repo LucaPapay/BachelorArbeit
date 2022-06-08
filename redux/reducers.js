@@ -272,10 +272,14 @@ const recursiveDeleteEntry = (subItemGroups, parentIds, id) => {
   const recur = (subItemGroups, parentIds, id) => {
     //found parent
     if (parentIds.length === 1) {
-      console.log("_----------_");
-      console.log(subItemGroups);
-      //TODO FIX DELETION
-      return subItemGroups;
+      return subItemGroups.map((element) =>
+        element.id == parentIds[0]
+          ? {
+              ...element,
+              data: element.data.filter((e) => e.id !== id),
+            }
+          : element
+      );
     }
     const currentParent = parentIds[0];
     //recursively traverse n-tree
