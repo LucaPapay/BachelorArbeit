@@ -1,8 +1,8 @@
 import React from "react";
-import { Text, View, TextInput, StyleSheet } from "react-native";
+import { TextInput, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { addSubItemGroup, nextId } from "../redux/actions";
-import Button from "../Components/Button";
+import { Box, Button, Center, Text, VStack } from "native-base";
 
 export function NewSubItemGroup({ route, navigation }) {
   const { parentIds } = route.params;
@@ -12,16 +12,26 @@ export function NewSubItemGroup({ route, navigation }) {
   let nextID = useSelector((state) => state.idCounter);
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <View style={styles.formLine}>
-        <Text style={styles.header}>Subitemgroup Name</Text>
-        <TextInput style={styles.input} onChangeText={onChangeText} value={text} placeholder="Name" />
-      </View>
-      <Button
-        title="SAVE"
-        onPress={() => addSubItemGroupToItemGroup(dispatch, nextID, text, navigation, parentIds)}
-      ></Button>
-    </View>
+    <Box bg="background.800" height="100%">
+      <VStack>
+        <Center>
+          <Box width="80%" mt="20" style={styles.formLine}>
+            <Text mb="2" style={styles.header}>
+              Subitemgroup Name
+            </Text>
+            <TextInput width="100%" style={styles.input} onChangeText={onChangeText} value={text} placeholder="Name" />
+          </Box>
+          <Button
+            width="80%"
+            height="12"
+            bg="green.500"
+            onPress={() => addSubItemGroupToItemGroup(dispatch, nextID, text, navigation, parentIds)}
+          >
+            Save
+          </Button>
+        </Center>
+      </VStack>
+    </Box>
   );
 }
 
@@ -34,7 +44,6 @@ function addSubItemGroupToItemGroup(dispatch, nextID, text, navigation, parentId
 const styles = StyleSheet.create({
   input: {
     height: 40,
-    width: 300,
     paddingHorizontal: 5,
     backgroundColor: "white",
     marginBottom: 5,

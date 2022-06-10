@@ -8,7 +8,7 @@ export function HomeScreenStackRouter() {
   return (
     <NavigationContainer independent={true}>
       <Stack.Navigator
-        initialRouteName="Home Screen"
+        initialRouteName="New Category"
         screenOptions={({ route }) => ({
           headerStyle: {
             height: 80,
@@ -21,7 +21,7 @@ export function HomeScreenStackRouter() {
           headerTintColor: "#06b6d4",
         })}
       >
-        <Stack.Screen name="Home Screen" component={HomeScreen} />
+        <Stack.Screen name="Categories" component={HomeScreen} />
         <Stack.Screen name="New Category" component={NewCategory} />
       </Stack.Navigator>
     </NavigationContainer>
