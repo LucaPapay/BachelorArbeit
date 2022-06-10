@@ -27,14 +27,13 @@ export default function SubItemGroup({ entry, parentIds }) {
             <Text style={styles.title}>{entry.name}</Text>
           </Box>
         </Pressable>
-        <Box style={{ flex: 1, flexDirection: "row" }}>
+        <Box>
           <Ionicons
             name="qr-code-outline"
             size={35}
             color="#14213d"
             onPress={() => navigation.push("QR Code", { name: entry.name, parentIds: parentIds, type: "i" })}
           />
-          <Ionicons name="eye" style={{ marginLeft: 10 }} size={35} color="#14213d" />
         </Box>
       </Box>
       <AlertDialog leastDestructiveRef={cancelRef} isOpen={isOpen} onClose={onClose}>
