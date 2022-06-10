@@ -8,7 +8,7 @@ export function HomeScreenStackRouter() {
   return (
     <NavigationContainer independent={true}>
       <Stack.Navigator
-        initialRouteName="Categories"
+        initialRouteName="New Category"
         screenOptions={({ route }) => ({
           headerStyle: {
             height: 80,

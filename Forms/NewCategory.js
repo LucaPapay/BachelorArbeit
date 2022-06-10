@@ -52,7 +52,7 @@ export function NewCategory({ route, navigation }) {
   return (
     <Box height="100%" bg="background.800">
       <Center>
-        <VStack>
+        <VStack w="91%">
           <Box height="20%" mt="5">
             <Box>
               <Text color="white" fontSize="xl">
@@ -108,7 +108,7 @@ export function NewCategory({ route, navigation }) {
                     {item.type === "text" ? (
                       <Box width="90%">
                         <Text color="white" fontSize="md">
-                          Textinput
+                          Text input
                         </Text>
                       </Box>
                     ) : item.type === "ean-8" || item.type === "ean-13" ? (
@@ -131,19 +131,19 @@ export function NewCategory({ route, navigation }) {
           </Box>
           <Box height="30%">
             <Center>
-              <VStack w="100%">
+              <VStack w="90%">
                 <Center>
                   <HStack>
-                    <Button marginX="1" width="20%" height={12} onPress={() => addAmount(parameters.length)}>
+                    <Button marginX="1" width="25%" height={12} onPress={() => addAmount(parameters.length)}>
                       Amount
                     </Button>
                     <Button marginX="1" width="20%" height={12} onPress={() => addParameter("Unit", "text")}>
                       Unit
                     </Button>
-                    <Button marginX="1" width="20%" height={12} onPress={() => addParameter("EAN-8", "ean-8")}>
+                    <Button marginX="1" width="25%" height={12} onPress={() => addParameter("EAN-8", "ean-8")}>
                       EAN-8
                     </Button>
-                    <Button marginX="1" width="20%" height={12} onPress={() => addParameter("EAN-13", "ean-13")}>
+                    <Button marginX="1" width="25%" height={12} onPress={() => addParameter("EAN-13", "ean-13")}>
                       EAN-13
                     </Button>
                   </HStack>
@@ -248,7 +248,11 @@ export function NewCategory({ route, navigation }) {
   function addNewCategoryFunction(name) {
     dispatch(nextId());
     dispatch(addNewCategory(nextID, name, parameters, icon));
-    navigation.goBack();
+    onChangeName("");
+    setParameters([]);
+    setParameterName("");
+    setParameterType("");
+    setIcon("help");
   }
 
   function closeModalAndAddNewParameter() {
