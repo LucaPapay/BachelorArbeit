@@ -61,12 +61,16 @@ export default function ScannerResult({ route, navigation }) {
     console.log(parentIds);
     parentIds = parentIds.map((i) => parseInt(i));
 
+    if (inventoryString !== "inventory") {
+      //todo error message
+      return;
+    }
+
     if (type === "e") {
       parentIds.pop();
     }
 
     navigation.navigate("Sub Item Group", { parentIds: parentIds, name: "test" });
-    //navigation.navigate("Item Groups", { parentIds: parentids, shouldForward: true });
   }
 
   function lookup() {
