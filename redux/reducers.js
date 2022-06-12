@@ -131,56 +131,29 @@ function addNewEntryToItemGroup(state, action) {
   }
 }
 
-const recursiveAddSubItemGroup = (subItemGroups, parentIds, id, newName, parentIdsCopy) => {
-  //found parent
-  if (parentIds.length === 1) {
-    let newSubItemGroup = new InventoryItemGroup(newName, id, parentIdsCopy);
-    return subItemGroups.map((element) =>
-      element.id === parentIds[0]
-        ? { ...element, subItemGroups: element.subItemGroups.concat(newSubItemGroup) }
-        : element
-    );
+const recursiveAddSubItemGroup = (subItemGroups, parentIds, action) => {
+  //Base case: if parent found
+  if (parentIds.length === 0) {
+    let newSubItemGroup = new InventoryItemGroup(action.newEntry, action.id, action.parentIds);
+    return subItemGroups.concat(newSubItemGroup);
   }
-  const currentParent = parentIds[0];
-  //recursively traverse n-tree
-  return subItemGroups.map((element) =>
-    element.id === currentParent
+  //Recursive step: return branches and deeper traverse tree by follwing the parentIds
+  const currentParentId = parentIds[0];
+  return subItemGroups.map((itemGroup) =>
+    itemGroup.id === currentParentId
       ? {
-          ...element,
-          subItemGroups: recursiveAddSubItemGroup(
-            element.subItemGroups,
-            parentIds.slice(1),
-            id,
-            newName,
-            parentIdsCopy
-          ),
+          ...itemGroup,
+          subItemGroups: recursiveAddSubItemGroup(itemGroup.subItemGroups, parentIds.slice(1), action),
         }
-      : element
+      : itemGroup
   );
 };
 
 function addSubItemGroup(state, action) {
-  let parentIds = action.parentIds;
-  if (parentIds.length === 1) {
-    let newSubItemGroup = new InventoryItemGroup(action.newEntry, action.id, action.parentIds);
-    return {
-      ...state,
-      data: state.data.map((item) => {
-        if (item.id != parentIds[0]) {
-          return item;
-        }
-        return {
-          ...item,
-          subItemGroups: item.subItemGroups.concat(newSubItemGroup),
-        };
-      }),
-    };
-  } else {
-    return {
-      ...state,
-      data: recursiveAddSubItemGroup(state.data, parentIds, action.id, action.newEntry, parentIds),
-    };
-  }
+  return {
+    ...state,
+    data: recursiveAddSubItemGroup(state.data, action.parentIds, action),
+  };
 }
 
 function addNewCategory(state, action) {

@@ -43,9 +43,6 @@ export function ItemGroupsScreen({ navigation }) {
         ) : (
           <Center>
             <Text mt="20">Please create your first Item Catgeory</Text>
-            <Button height={12} width="80" mt="5" onPress={() => navigation.navigate("New Category")}>
-              new Category
-            </Button>
           </Center>
         )}
       </Box>
