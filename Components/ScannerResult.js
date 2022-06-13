@@ -3,6 +3,7 @@ import QRCode from "react-native-qrcode-svg";
 import Barcode from "@kichiyaki/react-native-barcode-generator";
 import React, { useState } from "react";
 import { Text, Box, VStack, Center, Button, HStack, AlertDialog } from "native-base";
+import Constants from "expo-constants";
 
 export default function ScannerResult({ route, navigation }) {
   const { scannedResult, type } = route.params;
@@ -75,21 +76,25 @@ export default function ScannerResult({ route, navigation }) {
 
   function gotoItem() {
     let temp = scanned;
-    let inventoryString = temp.substring(0, temp.search("@"));
-    let type = temp.substring(temp.search("@") + 1, temp.search("#"));
-    let parentIds = temp.substring(temp.search("#") + 1).split(",");
-    parentIds = parentIds.map((i) => parseInt(i));
+    try {
+      let inventoryString = temp.substring(0, temp.search("@"));
+      let type = temp.substring(temp.search("@") + 1, temp.search("#"));
+      let parentIds = temp.substring(temp.search("#") + 1).split(",");
+      parentIds = parentIds.map((i) => parseInt(i));
 
-    if (inventoryString !== "inventory" || !(type === "e" || type === "i")) {
+      if (inventoryString !== Constants.manifest.extra.keyword || !(type === "e" || type === "i")) {
+        setAlertOpen(!alertOpen);
+        return;
+      }
+
+      if (type === "e") {
+        parentIds.pop();
+      }
+
+      navigation.navigate("Sub Item Group", { parentIds: parentIds, name: "test" });
+    } catch (e) {
       setAlertOpen(!alertOpen);
-      return;
     }
-
-    if (type === "e") {
-      parentIds.pop();
-    }
-
-    navigation.navigate("Sub Item Group", { parentIds: parentIds, name: "test" });
   }
 
   function lookup() {
