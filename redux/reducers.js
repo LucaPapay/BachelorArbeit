@@ -10,6 +10,7 @@ import {
   DELETE_LOW_STOCK_ENTRY,
   DELETE_ITEM_GROUP,
   DELETE_ENTRY,
+  ADD_SUB_ITEMGROUP_WITHOUT_PARENTIDS,
 } from "./types";
 import { InventoryItemGroup, InventoryEntry, Category, LowStockEntry } from "../Entities/DataStorage";
 
@@ -153,6 +154,33 @@ function addSubItemGroup(state, action) {
   return {
     ...state,
     data: recursiveAddSubItemGroup(state.data, action.parentIds, action),
+  };
+}
+
+const recursiveAddSubItemGroupWithoutParentIds = (subItemGroups, newSubItemGroup) => {
+  if (subItemGroups.length === 0) {
+    return [];
+  }
+
+  const parentId = newSubItemGroup.parentIds[newSubItemGroup.parentIds.length - 1];
+  return subItemGroups.map((itemGroup) =>
+    itemGroup.id !== parentId
+      ? {
+          ...itemGroup,
+          subItemGroups: recursiveAddSubItemGroupWithoutParentIds(itemGroup.subItemGroups, newSubItemGroup),
+        }
+      : {
+          ...itemGroup,
+          subItemGroups: itemGroup.subItemGroups.concat(newSubItemGroup),
+        }
+  );
+};
+
+function addSubItemGroupWithoutParentIds(state, action) {
+  let newSubItemGroup = new InventoryItemGroup(action.newEntry, action.id, action.parentIds);
+  return {
+    ...state,
+    data: recursiveAddSubItemGroupWithoutParentIds(state.data, newSubItemGroup),
   };
 }
 
@@ -302,6 +330,8 @@ function reducer(state = initalState, action) {
       return deleteItemGroup(state, action);
     case DELETE_ENTRY:
       return deleteEntry(state, action);
+    case ADD_SUB_ITEMGROUP_WITHOUT_PARENTIDS:
+      return addSubItemGroupWithoutParentIds(state, action);
     default:
       return state;
   }

@@ -6,6 +6,7 @@ import {
   addLowStockEntry,
   addNewCategory,
   addSubItemGroup,
+  addSubItemGroupWithoutParentIds,
   initalState,
   nextId,
 } from "../redux/actions";
@@ -32,11 +33,117 @@ export function DebugScreen() {
         <Button onPress={() => console.log(store)}>Store</Button>
         <Button onPress={() => testAPI()}>TEST api</Button>
         <Button onPress={() => testData()}>TEST Data</Button>
+        <Button onPress={() => speedTestAdd()}>TEST speed</Button>
+        <Button onPress={() => speedTestAddWithoutParents()}>TEST speed without Parents</Button>
         <TextInput style={styles.input} onChangeText={setEan} value={ean} placeholder="EAN / UPC / ISBN" />
         <Text>Name: {title}</Text>
       </VStack>
     </Box>
   );
+
+  function speedTestAdd() {
+    const start = Date.now();
+    let ITEMS_PER_LAYER = 4;
+
+    let id = 1;
+    dispatch(addNewCategory(id, "Test Category", [], "cube"));
+
+    for (let index = 0; index < ITEMS_PER_LAYER; index++) {
+      id++;
+      dispatch(nextId());
+      dispatch(addItemGroupToInventories("test" + id, id));
+      let parentId = id;
+      for (let j = 0; j < ITEMS_PER_LAYER; j++) {
+        id++;
+        addSIG(id, "test " + id, [parentId]);
+        let id1 = [parentId, id];
+        for (let k = 0; k < ITEMS_PER_LAYER; k++) {
+          id++;
+          addSIG(id, "test " + id, id1);
+          let id2 = id1.concat(id);
+          for (let l = 0; l < ITEMS_PER_LAYER; l++) {
+            id++;
+            addSIG(id, "test " + id, id2);
+            let id3 = id2.concat(id);
+            for (let a = 0; a < ITEMS_PER_LAYER; a++) {
+              id++;
+              addSIG(id, "test " + id, id3);
+              let id4 = id3.concat(id);
+              for (let b = 0; b < ITEMS_PER_LAYER; b++) {
+                id++;
+                addSIG(id, "test " + id, id4);
+                let id5 = id4.concat(id);
+                for (let c = 0; c < ITEMS_PER_LAYER; c++) {
+                  id++;
+                  addSIG(id, "test " + id, id5);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const millis = Date.now() - start;
+    console.log(`seconds elapsed = ${millis / 1000}`);
+  }
+
+  function speedTestAddWithoutParents() {
+    const start = Date.now();
+    let ITEMS_PER_LAYER = 4;
+
+    let id = 1;
+    dispatch(addNewCategory(id, "Test Category", [], "cube"));
+
+    for (let index = 0; index < ITEMS_PER_LAYER; index++) {
+      id++;
+      dispatch(nextId());
+      dispatch(addItemGroupToInventories("test" + id, id));
+      let parentId = id;
+      for (let j = 0; j < ITEMS_PER_LAYER; j++) {
+        id++;
+        addSIGWithoutParents(id, "test " + id, [parentId]);
+        let id1 = [parentId, id];
+        for (let k = 0; k < ITEMS_PER_LAYER; k++) {
+          id++;
+          addSIGWithoutParents(id, "test " + id, id1);
+          let id2 = id1.concat(id);
+          for (let l = 0; l < ITEMS_PER_LAYER; l++) {
+            id++;
+            addSIGWithoutParents(id, "test " + id, id2);
+            let id3 = id2.concat(id);
+            for (let a = 0; a < ITEMS_PER_LAYER; a++) {
+              id++;
+              addSIGWithoutParents(id, "test " + id, id3);
+              let id4 = id3.concat(id);
+              for (let b = 0; b < ITEMS_PER_LAYER; b++) {
+                id++;
+                addSIGWithoutParents(id, "test " + id, id4);
+                let id5 = id4.concat(id);
+                for (let c = 0; c < ITEMS_PER_LAYER; c++) {
+                  id++;
+                  addSIGWithoutParents(id, "test " + id, id5);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const millis = Date.now() - start;
+    console.log(`seconds elapsed = ${millis / 1000}`);
+  }
+
+  function addSIG(id, name, parentIds) {
+    dispatch(nextId());
+    dispatch(addSubItemGroup(id, name, parentIds));
+  }
+
+  function addSIGWithoutParents(id, name, parentIds) {
+    dispatch(nextId());
+    dispatch(addSubItemGroupWithoutParentIds(id, name, parentIds));
+  }
 
   function testData() {
     let parameters = [];
@@ -93,11 +200,6 @@ export function DebugScreen() {
 
     addEntry(20, "Sessel", [2, 5], parameters, "cube");
     dispatch(addLowStockEntry("Gushaus", 20, [2, 5]));
-  }
-
-  function addSIG(id, name, parentIds) {
-    dispatch(nextId());
-    dispatch(addSubItemGroup(id, name, parentIds));
   }
 
   function addEntry(id, name, parentIds, parameters, icon) {
