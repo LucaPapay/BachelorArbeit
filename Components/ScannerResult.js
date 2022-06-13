@@ -2,7 +2,7 @@ import { StyleSheet, View, Platform } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import Barcode from "@kichiyaki/react-native-barcode-generator";
 import React, { useState } from "react";
-import { Text, Box, VStack, Center, Button, HStack } from "native-base";
+import { Text, Box, VStack, Center, Button, HStack, AlertDialog } from "native-base";
 
 export default function ScannerResult({ route, navigation }) {
   const { scannedResult, type } = route.params;
@@ -16,6 +16,10 @@ export default function ScannerResult({ route, navigation }) {
 
   const [title, onChangeTitle] = React.useState("Press Lookup to Search for Item in UPC item db");
 
+  const [alertOpen, setAlertOpen] = React.useState(false);
+  const cancelRef = React.useRef(null);
+  const onClose = () => setAlertOpen(false);
+
   let code = <Text>kein bild vorhanden</Text>;
   if (trimmedType === "org.iso.QRCode" || trimmedType === "256") {
     code = <QRCode style={{ marginBottom: 25 }} size={250} value={scanned} />;
@@ -26,29 +30,47 @@ export default function ScannerResult({ route, navigation }) {
   }
 
   return (
-    <Box height="100%" bg="background.800">
-      <VStack>
-        <Center>
-          <Text mt="5" fontSize="xl">
-            Scanned:
-          </Text>
-          <Text>{scanned}</Text>
-          <Text mt="2" fontSize="xl" mb="5">
-            Type: {trimmedType}
-          </Text>
-          {code}
-          <Text mt="2">Item: {title}</Text>
-          <HStack mt="2">
-            <Button width="40" height={12} marginX="1" onPress={() => lookup()}>
-              Lookup Code on API
-            </Button>
-            <Button width="40" height={12} marginX="1" onPress={() => gotoItem()}>
-              Goto Item Group
-            </Button>
-          </HStack>
-        </Center>
-      </VStack>
-    </Box>
+    <>
+      <Box height="100%" bg="background.800">
+        <VStack>
+          <Center>
+            <Text mt="5" fontSize="xl">
+              Scanned:
+            </Text>
+            <Text>{scanned}</Text>
+            <Text mt="2" fontSize="xl" mb="5">
+              Type: {trimmedType}
+            </Text>
+            {code}
+            <Text mt="2">Item: {title}</Text>
+            <HStack mt="2">
+              <Button width="40" height={12} marginX="1" onPress={() => lookup()}>
+                Lookup Code on API
+              </Button>
+              <Button width="40" height={12} marginX="1" onPress={() => gotoItem()}>
+                Goto Item Group
+              </Button>
+            </HStack>
+          </Center>
+        </VStack>
+      </Box>
+      <Center>
+        <AlertDialog leastDestructiveRef={cancelRef} isOpen={alertOpen} onClose={onClose}>
+          <AlertDialog.Content>
+            <AlertDialog.CloseButton />
+            <AlertDialog.Header>Invalid Code Scanned</AlertDialog.Header>
+            <AlertDialog.Body>The scanned QR Code is not a valid Entry or Item Group code.</AlertDialog.Body>
+            <AlertDialog.Footer>
+              <Button.Group space={1}>
+                <Button w="80px" colorScheme="coolGray" onPress={onClose} ref={cancelRef}>
+                  Ok
+                </Button>
+              </Button.Group>
+            </AlertDialog.Footer>
+          </AlertDialog.Content>
+        </AlertDialog>
+      </Center>
+    </>
   );
 
   function gotoItem() {
@@ -56,13 +78,10 @@ export default function ScannerResult({ route, navigation }) {
     let inventoryString = temp.substring(0, temp.search("@"));
     let type = temp.substring(temp.search("@") + 1, temp.search("#"));
     let parentIds = temp.substring(temp.search("#") + 1).split(",");
-    console.log(inventoryString);
-    console.log(type);
-    console.log(parentIds);
     parentIds = parentIds.map((i) => parseInt(i));
 
-    if (inventoryString !== "inventory") {
-      //todo error message
+    if (inventoryString !== "inventory" || !(type === "e" || type === "i")) {
+      setAlertOpen(!alertOpen);
       return;
     }
 
