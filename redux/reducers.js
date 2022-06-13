@@ -50,30 +50,27 @@ const swapMatchingEntry = (data, action) => {
 };
 
 const recursiveEditInventoryEntry = (subItemGroups, parentIds, action) => {
-  const recur = (subItemGroups, parentIds, action) => {
-    //found parent
-    if (parentIds.length === 1) {
-      return subItemGroups.map((element) =>
-        element.id === parentIds[0]
-          ? {
-              ...element,
-              data: swapMatchingEntry(element.data, action),
-            }
-          : element
-      );
-    }
-    const currentParent = parentIds[0];
-    //recursively traverse n-tree
+  //found parent
+  if (parentIds.length === 1) {
     return subItemGroups.map((element) =>
-      element.id === currentParent
+      element.id === parentIds[0]
         ? {
             ...element,
-            subItemGroups: recursiveEditInventoryEntry(element.subItemGroups, parentIds.slice(1), action),
+            data: swapMatchingEntry(element.data, action),
           }
         : element
     );
-  };
-  return recur(subItemGroups, parentIds, action);
+  }
+  const currentParent = parentIds[0];
+  //recursively traverse n-tree
+  return subItemGroups.map((element) =>
+    element.id === currentParent
+      ? {
+          ...element,
+          subItemGroups: recursiveEditInventoryEntry(element.subItemGroups, parentIds.slice(1), action),
+        }
+      : element
+  );
 };
 
 function editItemGroupEntry(state, action) {
@@ -85,32 +82,29 @@ function editItemGroupEntry(state, action) {
 }
 
 const recursiveAddInventoryEntry = (subItemGroups, parentIds, action, parentIdsCopy) => {
-  const recur = (subItemGroups, parentIds, action, parentIdsCopy) => {
-    //found parent
-    if (parentIds.length === 1) {
-      let newInventoryEntry = new InventoryEntry(
-        action.newEntry,
-        action.id,
-        parentIdsCopy,
-        action.parameters,
-        action.icon
-      );
-      return subItemGroups.map((element) =>
-        element.id === parentIds[0] ? { ...element, data: element.data.concat(newInventoryEntry) } : element
-      );
-    }
-    const currentParent = parentIds[0];
-    //recursively traverse n-tree
-    return subItemGroups.map((element) =>
-      element.id === currentParent
-        ? {
-            ...element,
-            subItemGroups: recursiveAddInventoryEntry(element.subItemGroups, parentIds.slice(1), action, parentIdsCopy),
-          }
-        : element
+  //found parent
+  if (parentIds.length === 1) {
+    let newInventoryEntry = new InventoryEntry(
+      action.newEntry,
+      action.id,
+      parentIdsCopy,
+      action.parameters,
+      action.icon
     );
-  };
-  return recur(subItemGroups, parentIds, action, parentIdsCopy);
+    return subItemGroups.map((element) =>
+      element.id === parentIds[0] ? { ...element, data: element.data.concat(newInventoryEntry) } : element
+    );
+  }
+  const currentParent = parentIds[0];
+  //recursively traverse n-tree
+  return subItemGroups.map((element) =>
+    element.id === currentParent
+      ? {
+          ...element,
+          subItemGroups: recursiveAddInventoryEntry(element.subItemGroups, parentIds.slice(1), action, parentIdsCopy),
+        }
+      : element
+  );
 };
 
 function addNewEntryToItemGroup(state, action) {
@@ -137,59 +131,29 @@ function addNewEntryToItemGroup(state, action) {
   }
 }
 
-const recursiveAddSubItemGroup = (subItemGroups, parentIds, id, newName, parentIdsCopy) => {
-  const recur = (subItemGroups, parentIds, id, newName, parentIdsCopy) => {
-    //found parent
-    if (parentIds.length === 1) {
-      let newSubItemGroup = new InventoryItemGroup(newName, id, parentIdsCopy);
-      return subItemGroups.map((element) =>
-        element.id === parentIds[0]
-          ? { ...element, subItemGroups: element.subItemGroups.concat(newSubItemGroup) }
-          : element
-      );
-    }
-    const currentParent = parentIds[0];
-    //recursively traverse n-tree
-    return subItemGroups.map((element) =>
-      element.id === currentParent
-        ? {
-            ...element,
-            subItemGroups: recursiveAddSubItemGroup(
-              element.subItemGroups,
-              parentIds.slice(1),
-              id,
-              newName,
-              parentIdsCopy
-            ),
-          }
-        : element
-    );
-  };
-  return recur(subItemGroups, parentIds, id, newName, parentIdsCopy);
+const recursiveAddSubItemGroup = (subItemGroups, parentIds, action) => {
+  //Base case: if parent found
+  if (parentIds.length === 0) {
+    let newSubItemGroup = new InventoryItemGroup(action.newEntry, action.id, action.parentIds);
+    return subItemGroups.concat(newSubItemGroup);
+  }
+  //Recursive step: return branches and deeper traverse tree by follwing the parentIds
+  const currentParentId = parentIds[0];
+  return subItemGroups.map((itemGroup) =>
+    itemGroup.id === currentParentId
+      ? {
+          ...itemGroup,
+          subItemGroups: recursiveAddSubItemGroup(itemGroup.subItemGroups, parentIds.slice(1), action),
+        }
+      : itemGroup
+  );
 };
 
 function addSubItemGroup(state, action) {
-  let parentIds = action.parentIds;
-  if (parentIds.length === 1) {
-    let newSubItemGroup = new InventoryItemGroup(action.newEntry, action.id, action.parentIds);
-    return {
-      ...state,
-      data: state.data.map((item) => {
-        if (item.id != parentIds[0]) {
-          return item;
-        }
-        return {
-          ...item,
-          subItemGroups: item.subItemGroups.concat(newSubItemGroup),
-        };
-      }),
-    };
-  } else {
-    return {
-      ...state,
-      data: recursiveAddSubItemGroup(state.data, parentIds, action.id, action.newEntry, parentIds),
-    };
-  }
+  return {
+    ...state,
+    data: recursiveAddSubItemGroup(state.data, action.parentIds, action),
+  };
 }
 
 function addNewCategory(state, action) {
@@ -220,23 +184,20 @@ function deleteLowStockEntry(state, action) {
 }
 
 const recursiveDeleteSubItemGroup = (subItemGroups, parentIds, id) => {
-  const recur = (subItemGroups, parentIds, id) => {
-    //found parent
-    if (parentIds.length === 0) {
-      return subItemGroups.filter((e) => e.id !== id);
-    }
-    const currentParent = parentIds[0];
-    //recursively traverse n-tree
-    return subItemGroups.map((element) =>
-      element.id === currentParent
-        ? {
-            ...element,
-            subItemGroups: recursiveDeleteSubItemGroup(element.subItemGroups, parentIds.slice(1), id),
-          }
-        : element
-    );
-  };
-  return recur(subItemGroups, parentIds, id);
+  //found parent
+  if (parentIds.length === 0) {
+    return subItemGroups.filter((e) => e.id !== id);
+  }
+  const currentParent = parentIds[0];
+  //recursively traverse n-tree
+  return subItemGroups.map((element) =>
+    element.id === currentParent
+      ? {
+          ...element,
+          subItemGroups: recursiveDeleteSubItemGroup(element.subItemGroups, parentIds.slice(1), id),
+        }
+      : element
+  );
 };
 
 function deleteItemGroup(state, action) {
@@ -269,30 +230,27 @@ function deleteItemGroup(state, action) {
 }
 
 const recursiveDeleteEntry = (subItemGroups, parentIds, id) => {
-  const recur = (subItemGroups, parentIds, id) => {
-    //found parent
-    if (parentIds.length === 1) {
-      return subItemGroups.map((element) =>
-        element.id == parentIds[0]
-          ? {
-              ...element,
-              data: element.data.filter((e) => e.id !== id),
-            }
-          : element
-      );
-    }
-    const currentParent = parentIds[0];
-    //recursively traverse n-tree
+  //found parent
+  if (parentIds.length === 1) {
     return subItemGroups.map((element) =>
-      element.id === currentParent
+      element.id == parentIds[0]
         ? {
             ...element,
-            subItemGroups: recursiveDeleteEntry(element.subItemGroups, parentIds.slice(1), id),
+            data: element.data.filter((e) => e.id !== id),
           }
         : element
     );
-  };
-  return recur(subItemGroups, parentIds, id);
+  }
+  const currentParent = parentIds[0];
+  //recursively traverse n-tree
+  return subItemGroups.map((element) =>
+    element.id === currentParent
+      ? {
+          ...element,
+          subItemGroups: recursiveDeleteEntry(element.subItemGroups, parentIds.slice(1), id),
+        }
+      : element
+  );
 };
 
 function deleteEntry(state, action) {
