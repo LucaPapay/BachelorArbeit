@@ -10,6 +10,7 @@ import {
   DELETE_LOW_STOCK_ENTRY,
   DELETE_ITEM_GROUP,
   DELETE_ENTRY,
+  ADD_SUB_ITEMGROUP_WITHOUT_PARENTIDS,
 } from "./types";
 
 export const addItemGroupToInventories = (entry, id) => ({
@@ -27,6 +28,12 @@ export const addEntryToItemGroup = (id, entry, parentIds, parameters, icon) => (
 });
 export const addSubItemGroup = (id, entry, parentIds) => ({
   type: ADD_SUB_ITEMGROUP,
+  id: id,
+  newEntry: entry,
+  parentIds: parentIds,
+});
+export const addSubItemGroupWithoutParentIds = (id, entry, parentIds) => ({
+  type: ADD_SUB_ITEMGROUP_WITHOUT_PARENTIDS,
   id: id,
   newEntry: entry,
   parentIds: parentIds,
