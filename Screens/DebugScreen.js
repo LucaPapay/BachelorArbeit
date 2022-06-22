@@ -22,6 +22,8 @@ export function DebugScreen() {
   const [title, onChangeName] = React.useState("");
   const [ean, setEan] = useState("885909128525");
 
+  let ITEMS_PER_LAYER_WIDE = 20;
+
   return (
     <Box bg="background.800" height="100%">
       <VStack space={10} alignItems="center" mt={10}>
@@ -34,7 +36,7 @@ export function DebugScreen() {
         <Button onPress={() => testAPI()}>TEST api</Button>
         <Button onPress={() => testData()}>TEST Data</Button>
         <Button onPress={() => speedTestAdd()}>TEST speed</Button>
-        <Button onPress={() => speedTestAddWithoutParents()}>TEST speed without Parents</Button>
+        <Button onPress={() => speedTestWideWithoutParents()}>TEST speed without Parents</Button>
         <TextInput style={styles.input} onChangeText={setEan} value={ean} placeholder="EAN / UPC / ISBN" />
         <Text>Name: {title}</Text>
       </VStack>
@@ -42,11 +44,13 @@ export function DebugScreen() {
   );
 
   function speedTestAdd() {
+    let ITEMS_PER_LAYER = 3;
     const start = Date.now();
-    let ITEMS_PER_LAYER = 4;
 
     let id = 1;
     dispatch(addNewCategory(id, "Test Category", [], "cube"));
+
+    let id5 = [];
 
     for (let index = 0; index < ITEMS_PER_LAYER; index++) {
       id++;
@@ -72,7 +76,7 @@ export function DebugScreen() {
               for (let b = 0; b < ITEMS_PER_LAYER; b++) {
                 id++;
                 addSIG(id, "test " + id, id4);
-                let id5 = id4.concat(id);
+                id5 = id4.concat(id);
                 for (let c = 0; c < ITEMS_PER_LAYER; c++) {
                   id++;
                   addSIG(id, "test " + id, id5);
@@ -86,11 +90,38 @@ export function DebugScreen() {
 
     const millis = Date.now() - start;
     console.log(`seconds elapsed = ${millis / 1000}`);
+
+    addAtTheEnd(id5, id);
+  }
+
+  function addAtTheEnd(parentIds, id) {
+    const start = Date.now();
+
+    for (let c = 0; c < 10; c++) {
+      id++;
+      addSIG(id, "test " + id, parentIds);
+    }
+
+    const millis = Date.now() - start;
+    console.log(`Time to add another 10 fast = ${millis / 1000}`);
+  }
+
+  function addAtTheEndWithoutParent(parentIds, id) {
+    const start = Date.now();
+
+    for (let c = 0; c < 10; c++) {
+      id++;
+      addSIGWithoutParents(id, "test " + id, parentIds);
+    }
+
+    const millis = Date.now() - start;
+    console.log(`Time to add another 10 slow = ${millis / 1000}`);
   }
 
   function speedTestAddWithoutParents() {
+    let ITEMS_PER_LAYER = 1;
+    let id5 = [];
     const start = Date.now();
-    let ITEMS_PER_LAYER = 4;
 
     let id = 1;
     dispatch(addNewCategory(id, "Test Category", [], "cube"));
@@ -119,7 +150,7 @@ export function DebugScreen() {
               for (let b = 0; b < ITEMS_PER_LAYER; b++) {
                 id++;
                 addSIGWithoutParents(id, "test " + id, id4);
-                let id5 = id4.concat(id);
+                id5 = id4.concat(id);
                 for (let c = 0; c < ITEMS_PER_LAYER; c++) {
                   id++;
                   addSIGWithoutParents(id, "test " + id, id5);
@@ -127,6 +158,60 @@ export function DebugScreen() {
               }
             }
           }
+        }
+      }
+    }
+
+    const millis = Date.now() - start;
+    console.log(`seconds elapsed = ${millis / 1000}`);
+  }
+
+  function speedTestWide() {
+    const start = Date.now();
+    let ITEMS_PER_LAYER = ITEMS_PER_LAYER_WIDE;
+
+    let id = 1;
+    dispatch(addNewCategory(id, "Test Category", [], "cube"));
+
+    for (let index = 0; index < ITEMS_PER_LAYER; index++) {
+      id++;
+      dispatch(nextId());
+      dispatch(addItemGroupToInventories("test" + id, id));
+      let parentId = id;
+      for (let j = 0; j < ITEMS_PER_LAYER; j++) {
+        id++;
+        addSIG(id, "test " + id, [parentId]);
+        let id1 = [parentId, id];
+        for (let k = 0; k < ITEMS_PER_LAYER; k++) {
+          id++;
+          addSIG(id, "test " + id, id1);
+        }
+      }
+    }
+
+    const millis = Date.now() - start;
+    console.log(`seconds elapsed = ${millis / 1000}`);
+  }
+
+  function speedTestWideWithoutParents() {
+    const start = Date.now();
+    let ITEMS_PER_LAYER = ITEMS_PER_LAYER_WIDE;
+
+    let id = 1;
+    dispatch(addNewCategory(id, "Test Category", [], "cube"));
+
+    for (let index = 0; index < ITEMS_PER_LAYER; index++) {
+      id++;
+      dispatch(nextId());
+      dispatch(addItemGroupToInventories("test" + id, id));
+      let parentId = id;
+      for (let j = 0; j < ITEMS_PER_LAYER; j++) {
+        id++;
+        addSIGWithoutParents(id, "test " + id, [parentId]);
+        let id1 = [parentId, id];
+        for (let k = 0; k < ITEMS_PER_LAYER; k++) {
+          id++;
+          addSIGWithoutParents(id, "test " + id, id1);
         }
       }
     }

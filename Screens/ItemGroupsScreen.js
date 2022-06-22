@@ -10,7 +10,6 @@ import { addItemGroupToInventories, addNewCategory, addSubItemGroup, initalState
 
 export function ItemGroupsScreen({ navigation }) {
   const dispatch = useDispatch();
-  //dispatch(initalState());
   let DATA = useSelector((state) => state.data);
   let categories = useSelector((state) => state.categories);
   let hasCategories = categories.length > 0;
@@ -24,15 +23,23 @@ export function ItemGroupsScreen({ navigation }) {
               <Button
                 height="12"
                 leftIcon={<Icon as={Ionicons} name="add-circle-outline" size="lg" />}
-                size={"lg"}
+                size={"md"}
                 onPress={() => navigation.navigate("New ItemGroup")}
               >
-                ItemGroup
+                Item Group
+              </Button>
+              <Button
+                height="12"
+                leftIcon={<Icon as={Ionicons} name="add-circle-outline" size="lg" />}
+                size={"md"}
+                onPress={() => navigation.navigate("Inventory List")}
+              >
+                List View
               </Button>
               <Button
                 height="12"
                 leftIcon={<Icon as={Ionicons} name="barcode-outline" size="lg" />}
-                size={"lg"}
+                size={"md"}
                 onPress={() => navigation.navigate("Scanner")}
               >
                 Scanner
