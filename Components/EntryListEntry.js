@@ -22,7 +22,11 @@ export default function EntryListEntry({ entry, parentIds }) {
   return (
     <>
       <HStack style={styles.item} h="20">
-        <Pressable onLongPress={() => setIsOpen(!isOpen)} style={{ flex: 7 }}>
+        <Pressable
+          onLongPress={() => setIsOpen(!isOpen)}
+          style={{ flex: 7 }}
+          onPress={() => navigation.push("Edit Entry", { parentIds: parentIds, entry: entry })}
+        >
           <HStack>
             <Ionicons name={entry.icon} size={35} color="#14213d"></Ionicons>
             <Text fontSize="2xl" color="black" ml={2} mt="1">

@@ -266,20 +266,20 @@ export function DebugScreen() {
     addSIG(18, "7. Stock", [2]);
 
     parameters = [];
-    temp = new Parameter("Amount", "number", 10);
+    temp = new Parameter("Amount", "number", "10");
     temp.id = 1;
     parameters.push(temp);
-    temp = new Parameter("Threshold", "number", 5);
+    temp = new Parameter("Threshold", "number", "5");
     temp.id = 2;
     parameters.push(temp);
 
     addEntry(19, "Tisch", [2, 5], parameters, "cube");
 
     parameters = [];
-    temp = new Parameter("Amount", "number", 10);
+    temp = new Parameter("Amount", "number", "10");
     temp.id = 1;
     parameters.push(temp);
-    temp = new Parameter("Threshold", "number", 20);
+    temp = new Parameter("Threshold", "number", "20");
     temp.id = 2;
     parameters.push(temp);
 

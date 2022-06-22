@@ -13,6 +13,7 @@ import { EntryDetails } from "../Components/EntryDetails";
 import { EntryEditAmountView } from "../Components/EntryEditAmountView";
 import { NewCategory } from "../Forms/NewCategory";
 import { InventoryList } from "../Components/InventoryList";
+import { EditEntry } from "../Forms/EditEntry";
 
 export function ItemGroupsStackRouter() {
   const Stack = createStackNavigator();
@@ -40,6 +41,7 @@ export function ItemGroupsStackRouter() {
         />
         <Stack.Screen name="New ItemGroup" component={NewItemGroup} />
         <Stack.Screen name="Inventory List" component={InventoryList} />
+        <Stack.Screen name="Edit Entry" component={EditEntry} />
         <Stack.Screen name="New SubItemGroup" component={NewSubItemGroup} />
         <Stack.Screen name="QR Code" component={EntryCodeView} />
         <Stack.Screen name="Edit Amount" component={EntryEditAmountView} />
