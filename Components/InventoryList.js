@@ -1,18 +1,11 @@
-import { Platform, StyleSheet, View, StatusBar, FlatList } from "react-native";
+import { FlatList } from "react-native";
 import { useSelector } from "react-redux";
-import { Box, Button, Center, Text } from "native-base";
-import SubItemGroupListEntry from "../Components/SubItemGroupListEntry";
-import { Icon } from "native-base";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { Box } from "native-base";
 import EntryListEntry from "./EntryListEntry";
-
 import { useDispatch } from "react-redux";
-import { addItemGroupToInventories, addNewCategory, addSubItemGroup, initalState, nextId } from "../redux/actions";
 
 export function InventoryList({ navigation }) {
-  const dispatch = useDispatch();
   let DATA = useSelector((state) => state.data);
-
   let entries = getItemList(DATA);
 
   return (

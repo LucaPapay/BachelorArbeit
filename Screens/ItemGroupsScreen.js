@@ -4,9 +4,7 @@ import { Box, Button, Center, Text } from "native-base";
 import SubItemGroupListEntry from "../Components/SubItemGroupListEntry";
 import { Icon } from "native-base";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
 import { useDispatch } from "react-redux";
-import { addItemGroupToInventories, addNewCategory, addSubItemGroup, initalState, nextId } from "../redux/actions";
 
 export function ItemGroupsScreen({ navigation }) {
   const dispatch = useDispatch();
@@ -30,7 +28,7 @@ export function ItemGroupsScreen({ navigation }) {
               </Button>
               <Button
                 height="12"
-                leftIcon={<Icon as={Ionicons} name="add-circle-outline" size="lg" />}
+                leftIcon={<Icon as={Ionicons} name="list-outline" size="lg" />}
                 size={"md"}
                 onPress={() => navigation.navigate("Inventory List")}
               >
