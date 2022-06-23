@@ -1,4 +1,4 @@
-import { View, StyleSheet, TextInput } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addEntryToItemGroup,
@@ -10,10 +10,11 @@ import {
   initalState,
   nextId,
 } from "../redux/actions";
-import { Box, Button, VStack } from "native-base";
+import { Box, Button, HStack, VStack } from "native-base";
 import React, { useState } from "react";
 import { Text } from "native-base";
 import { InventoryItemGroup, Parameter } from "../Entities/DataStorage";
+import { exportDataToExcel } from "../Services/XLSXHandler";
 
 export function DebugScreen() {
   const dispatch = useDispatch();
@@ -26,22 +27,69 @@ export function DebugScreen() {
 
   return (
     <Box bg="background.800" height="100%">
-      <VStack space={10} alignItems="center" mt={10}>
-        <Button onPress={() => dispatch(initalState())}>Reset</Button>
-        <Text fontSize="lg">Current ID: {counter}</Text>
-        <Button height="8" onPress={() => dispatch(nextId())}>
-          id plus
+      <VStack space={4} alignItems="center" mt={10}>
+        <Button onPress={() => dispatch(initalState())} backgroundColor="danger.500">
+          Reset
         </Button>
-        <Button onPress={() => console.log(store)}>Store</Button>
+        <HStack>
+          <Text mx="1" fontSize="lg" mt="1.5">
+            Current ID: {counter}
+          </Text>
+          <Button mx="1" onPress={() => dispatch(nextId())}>
+            id plus
+          </Button>
+        </HStack>
+        <HStack>
+          <Button mx="1" onPress={() => exportAll()}>
+            Export Store
+          </Button>
+          <Button mx="1">Import Store</Button>
+        </HStack>
+        <HStack>
+          <Button mx="1" onPress={() => console.log(store)}>
+            Store
+          </Button>
+          <Button mx="1" onPress={() => testData()}>
+            TEST Data
+          </Button>
+        </HStack>
+        <HStack>
+          <Button mx="1" onPress={() => speedTestAdd()}>
+            TEST speed
+          </Button>
+          <Button mx="1" onPress={() => speedTestWideWithoutParents()}>
+            TEST speed without Parents
+          </Button>
+        </HStack>
+
         <Button onPress={() => testAPI()}>TEST api</Button>
-        <Button onPress={() => testData()}>TEST Data</Button>
-        <Button onPress={() => speedTestAdd()}>TEST speed</Button>
-        <Button onPress={() => speedTestWideWithoutParents()}>TEST speed without Parents</Button>
         <TextInput style={styles.input} onChangeText={setEan} value={ean} placeholder="EAN / UPC / ISBN" />
         <Text>Name: {title}</Text>
       </VStack>
     </Box>
   );
+
+  function getItemList(itemGroup) {
+    let entries = [];
+    for (let i = 0; i < itemGroup.length; i++) {
+      entries = entries.concat(recurList(itemGroup[i]));
+    }
+    return entries;
+  }
+
+  function recurList(itemGroup) {
+    let entries = itemGroup.data;
+
+    for (let i = 0; i < itemGroup.subItemGroups.length; i++) {
+      entries = entries.concat(recurList(itemGroup.subItemGroups[i]));
+    }
+
+    return entries;
+  }
+
+  function exportAll() {
+    exportDataToExcel(getItemList(store.data));
+  }
 
   function speedTestAdd() {
     let ITEMS_PER_LAYER = 3;

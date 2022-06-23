@@ -1,4 +1,4 @@
-import { Box, Button, Icon, Pressable, Text } from "native-base";
+import { Box, Button, HStack, Icon, Pressable, Text } from "native-base";
 import { Platform, StyleSheet, StatusBar, FlatList, Dimensions, Animated } from "react-native";
 import { useSelector } from "react-redux";
 import EntryListEntry from "../Components/EntryListEntry";
@@ -6,6 +6,7 @@ import SubItemGroupListEntry from "../Components/SubItemGroupListEntry";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { TabView, SceneMap } from "react-native-tab-view";
 import * as React from "react";
+import { exportDataToExcel } from "../Services/XLSXHandler";
 
 export function SubItemGroupScreen({ route, navigation }) {
   const { parentIds } = route.params;
@@ -41,6 +42,23 @@ export function SubItemGroupScreen({ route, navigation }) {
 
   const SecondRoute = () => (
     <Box flex={1} mx="4" mt="4">
+      <HStack w="100%">
+        <Button height="8" size={"md"} mb="3" w="49%" mr="1">
+          Import
+        </Button>
+        <Button
+          height="8"
+          ml="1"
+          size={"md"}
+          mb="3"
+          w="49%"
+          onPress={() => {
+            exportDataToExcel(DATA.data);
+          }}
+        >
+          Export
+        </Button>
+      </HStack>
       <Button
         height="12"
         leftIcon={<Icon as={Ionicons} name="add-circle-outline" size="lg" />}
