@@ -102,28 +102,28 @@ export function NewCategory({ route, navigation }) {
               renderItem={({ item, index }) => {
                 return (
                   <Box width="90%" mb="2">
-                    <Text color="white" fontSize="xl">
-                      {item.name}
-                    </Text>
-                    {item.type === "text" ? (
-                      <Box width="90%">
-                        <Text color="white" fontSize="md">
+                    <HStack alignItems="baseline" justifyContent="space-between">
+                      <Text color="white" fontSize="md">
+                        {item.name}
+                      </Text>
+                      {item.type === "text" ? (
+                        <Text color="white" fontSize="sm">
                           Text input
                         </Text>
-                      </Box>
-                    ) : item.type === "ean-8" || item.type === "ean-13" ? (
-                      <Box>
-                        <Text>Ean Code</Text>
-                      </Box>
-                    ) : item.type === "qr" ? (
-                      <Box>
-                        <Text>QR Code</Text>
-                      </Box>
-                    ) : (
-                      <Box>
-                        <Text>Numeric input</Text>
-                      </Box>
-                    )}
+                      ) : item.type === "ean-8" || item.type === "ean-13" ? (
+                        <Text color="white" fontSize="sm">
+                          Ean Code
+                        </Text>
+                      ) : item.type === "qr" ? (
+                        <Text color="white" fontSize="sm">
+                          QR Code
+                        </Text>
+                      ) : (
+                        <Text color="white" fontSize="sm">
+                          Numeric input
+                        </Text>
+                      )}
+                    </HStack>
                   </Box>
                 );
               }}

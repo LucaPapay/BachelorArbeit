@@ -36,13 +36,13 @@ export async function exportDataToExcel(data) {
 
   let wb = XLSX.utils.book_new();
   let ws = XLSX.utils.aoa_to_sheet(output);
-  XLSX.utils.book_append_sheet(wb, ws, "State");
+  XLSX.utils.book_append_sheet(wb, ws, "Inventory");
   const wbout = XLSX.write(wb, {
     type: "base64",
     bookType: "xlsx",
   });
 
-  const uri = FileSystem.cacheDirectory + "state.xlsx";
+  const uri = FileSystem.cacheDirectory + "Inventory.xlsx";
 
   await FileSystem.writeAsStringAsync(uri, wbout, {
     encoding: FileSystem.EncodingType.Base64,
@@ -50,7 +50,7 @@ export async function exportDataToExcel(data) {
 
   await Sharing.shareAsync(uri, {
     mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    dialogTitle: "MyWater data",
+    dialogTitle: "Inventory Export",
     UTI: "com.microsoft.excel.xlsx",
   });
 }

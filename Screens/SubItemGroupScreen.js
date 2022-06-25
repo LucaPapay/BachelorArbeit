@@ -43,13 +43,13 @@ export function SubItemGroupScreen({ route, navigation }) {
   const SecondRoute = () => (
     <Box flex={1} mx="4" mt="4">
       <HStack w="100%">
-        <Button height="8" size={"md"} mb="3" w="49%" mr="1">
+        <Button height="8" size={"sm"} mb="3" w="49%" mr="1">
           Import
         </Button>
         <Button
           height="8"
           ml="1"
-          size={"md"}
+          size={"sm"}
           mb="3"
           w="49%"
           onPress={() => {
