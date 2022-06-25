@@ -1,14 +1,15 @@
 import { FlatList } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Box, HStack, Button, Input, Icon } from "native-base";
 import EntryListEntry from "./EntryListEntry";
-import { exportDataToExcel } from "../Services/XLSXHandler";
+import { exportDataToExcel, importData } from "../Services/XLSXHandler";
 import React, { useState, useCallback } from "react";
 import * as DocumentPicker from "expo-document-picker";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 export function InventoryList({ navigation }) {
   let DATA = useSelector((state) => state.data);
+  const dispatch = useDispatch();
 
   let entries = getItemList(DATA);
   const [filteredEntries, setFilteredEntries] = React.useState(entries);
@@ -17,8 +18,11 @@ export function InventoryList({ navigation }) {
 
   const pickDocument = async () => {
     let result = await DocumentPicker.getDocumentAsync({});
-    console.log(result.uri);
-    console.log(result);
+    importData(result, DATA, dispatch).then(() => {
+      entries = getItemList(useSelector((state) => state.data));
+      setFilteredEntries(entries);
+      setSearchText("");
+    });
   };
 
   return (

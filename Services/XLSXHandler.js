@@ -1,15 +1,59 @@
 import * as XLSX from "xlsx";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system";
+import { InventoryEntry, Parameter } from "../Entities/DataStorage";
+import { addEntryToItemGroup, editItemGroupEntry } from "../redux/actions";
 
-function toArray(element) {
-  let temp = [element.id, element.name, element.parentIds.toString(), element.icon];
-  element.parameters.forEach((p) => {
-    temp.push(p.name);
-    temp.push(p.type);
-    temp.push(p.value);
+export async function importData(importedData, entries, dispatch) {
+  const b64 = await FileSystem.readAsStringAsync(importedData.uri, { encoding: FileSystem.EncodingType.Base64 });
+  const workbook = XLSX.read(b64, { type: "base64" });
+
+  //console.log(workbook);
+  // console.log(workbook.Sheets["Inventory"]);
+
+  let sheet = workbook.Sheets["Inventory"];
+  var range = XLSX.utils.decode_range(sheet["!ref"]);
+  //console.log(range);
+
+  let ids = getIds(entries);
+
+  let excelRowsObjArr = XLSX.utils.sheet_to_row_object_array(sheet);
+  //console.log(excelRowsObjArr);
+  let parsedEntries = [];
+  excelRowsObjArr.forEach((e) => parsedEntries.push(createEntryFromRow(e)));
+  parsedEntries.forEach((e) => {
+    if (ids.includes(e.id)) {
+      console.log("edit " + e.name);
+      console.log(e);
+      dispatch(editItemGroupEntry(e.id, e));
+    } else {
+      console.log("add " + e.name);
+      dispatch(addEntryToItemGroup(e.id, e, e.parentIds, e.parameters, e.icon));
+    }
   });
-  return temp;
+}
+
+function createEntryFromRow(entryObj) {
+  let parameters = [];
+  let parCount = Math.floor((Object.keys(entryObj).length - 4) / 3);
+  for (let i = 1; i <= parCount; i++) {
+    let temp = new Parameter(
+      entryObj["Parameter" + i + "Name"],
+      entryObj["Parameter" + i + "Type"],
+      entryObj["Parameter" + i + "Value"]
+    );
+    temp.id = i;
+    parameters.push(temp);
+  }
+
+  let parentIds = entryObj["Parent ids"].split(",").map(Number);
+
+  return new InventoryEntry(entryObj["Name"], entryObj["Id"], parentIds, parameters, entryObj["Icon"]);
+}
+
+function getIds(entries) {
+  let entriyList = getItemList(entries);
+  return entriyList.map((e) => e.id);
 }
 
 export async function exportDataToExcel(data) {
@@ -55,6 +99,30 @@ export async function exportDataToExcel(data) {
   });
 }
 
-async function openShareDialogAsync(uri) {
-  await Sharing.shareAsync(uri);
+function toArray(element) {
+  let temp = [element.id, element.name, element.parentIds.toString(), element.icon];
+  element.parameters.forEach((p) => {
+    temp.push(p.name);
+    temp.push(p.type);
+    temp.push(p.value);
+  });
+  return temp;
+}
+
+function getItemList(itemGroup) {
+  let entries = [];
+  for (let i = 0; i < itemGroup.length; i++) {
+    entries = entries.concat(recurList(itemGroup[i]));
+  }
+  return entries;
+}
+
+function recurList(itemGroup) {
+  let entries = itemGroup.data;
+
+  for (let i = 0; i < itemGroup.subItemGroups.length; i++) {
+    entries = entries.concat(recurList(itemGroup.subItemGroups[i]));
+  }
+
+  return entries;
 }
