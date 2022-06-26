@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Box, HStack, Button, Input, Icon } from "native-base";
 import EntryListEntry from "./EntryListEntry";
 import { exportDataToExcel, importData } from "../Services/XLSXHandler";
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import * as DocumentPicker from "expo-document-picker";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
@@ -16,13 +16,15 @@ export function InventoryList({ navigation }) {
 
   const [searchText, setSearchText] = React.useState("");
 
+  useEffect(() => {
+    entries = getItemList(DATA);
+    setFilteredEntries(entries);
+  }, [DATA]);
+
   const pickDocument = async () => {
     let result = await DocumentPicker.getDocumentAsync({});
-    importData(result, DATA, dispatch).then(() => {
-      entries = getItemList(useSelector((state) => state.data));
-      setFilteredEntries(entries);
-      setSearchText("");
-    });
+    await importData(result, DATA, dispatch);
+    setSearchText("");
   };
 
   return (

@@ -1,17 +1,19 @@
 import { Box, Button, HStack, Icon, Pressable, Text } from "native-base";
 import { Platform, StyleSheet, StatusBar, FlatList, Dimensions, Animated } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import EntryListEntry from "../Components/EntryListEntry";
 import SubItemGroupListEntry from "../Components/SubItemGroupListEntry";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { TabView, SceneMap } from "react-native-tab-view";
 import * as React from "react";
-import { exportDataToExcel } from "../Services/XLSXHandler";
+import { exportDataToExcel, importData } from "../Services/XLSXHandler";
+import * as DocumentPicker from "expo-document-picker";
 
 export function SubItemGroupScreen({ route, navigation }) {
   const { parentIds } = route.params;
-
   let DATA = getCorrectSubItemGroup(parentIds);
+  let allEntries = useSelector((state) => state.data);
+  const dispatch = useDispatch();
 
   const [index, setIndex] = React.useState(0);
 
@@ -19,6 +21,11 @@ export function SubItemGroupScreen({ route, navigation }) {
     { key: "first", title: "Item Groups" },
     { key: "second", title: "Entrys" },
   ]);
+
+  const pickDocument = async () => {
+    let result = await DocumentPicker.getDocumentAsync({});
+    await importData(result, allEntries, dispatch);
+  };
 
   const FirstRoute = () => (
     <Box flex={1} mx="4" mt="4">
@@ -43,7 +50,7 @@ export function SubItemGroupScreen({ route, navigation }) {
   const SecondRoute = () => (
     <Box flex={1} mx="4" mt="4">
       <HStack w="100%">
-        <Button height="8" size={"sm"} mb="3" w="49%" mr="1">
+        <Button height="8" size={"sm"} mb="3" w="49%" mr="1" onPress={() => pickDocument()}>
           Import
         </Button>
         <Button

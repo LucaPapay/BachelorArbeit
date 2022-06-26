@@ -2,33 +2,24 @@ import * as XLSX from "xlsx";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system";
 import { InventoryEntry, Parameter } from "../Entities/DataStorage";
-import { addEntryToItemGroup, editItemGroupEntry } from "../redux/actions";
+import { addEntryToItemGroup, editItemGroupEntry, nextId } from "../redux/actions";
 
 export async function importData(importedData, entries, dispatch) {
   const b64 = await FileSystem.readAsStringAsync(importedData.uri, { encoding: FileSystem.EncodingType.Base64 });
   const workbook = XLSX.read(b64, { type: "base64" });
-
-  //console.log(workbook);
-  // console.log(workbook.Sheets["Inventory"]);
-
-  let sheet = workbook.Sheets["Inventory"];
-  var range = XLSX.utils.decode_range(sheet["!ref"]);
-  //console.log(range);
-
   let ids = getIds(entries);
 
-  let excelRowsObjArr = XLSX.utils.sheet_to_row_object_array(sheet);
-  //console.log(excelRowsObjArr);
+  let excelRowsObjArr = XLSX.utils.sheet_to_row_object_array(workbook.Sheets["Inventory"]);
   let parsedEntries = [];
   excelRowsObjArr.forEach((e) => parsedEntries.push(createEntryFromRow(e)));
   parsedEntries.forEach((e) => {
     if (ids.includes(e.id)) {
       console.log("edit " + e.name);
-      console.log(e);
       dispatch(editItemGroupEntry(e.id, e));
     } else {
       console.log("add " + e.name);
-      dispatch(addEntryToItemGroup(e.id, e, e.parentIds, e.parameters, e.icon));
+      dispatch(nextId());
+      dispatch(addEntryToItemGroup(e.id, e.name, e.parentIds, e.parameters, e.icon));
     }
   });
 }
@@ -45,7 +36,6 @@ function createEntryFromRow(entryObj) {
     temp.id = i;
     parameters.push(temp);
   }
-
   let parentIds = entryObj["Parent ids"].split(",").map(Number);
 
   return new InventoryEntry(entryObj["Name"], entryObj["Id"], parentIds, parameters, entryObj["Icon"]);
