@@ -6,13 +6,14 @@ import { Parameter } from "../Entities/DataStorage";
 import { Picker } from "@react-native-picker/picker";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Input, Box, Center, VStack, Button, Text, HStack } from "native-base";
+import * as ImagePicker from "expo-image-picker";
 
 export function NewEntry({ route, navigation }) {
   const { parentIds } = route.params;
 
   const [name, onChangeName] = React.useState("");
+  const [image, setImage] = React.useState("");
   const [parameters, setParameters] = useState([]);
-
   const [modalVisible, setModalVisible] = useState(true);
 
   const dispatch = useDispatch();
@@ -23,35 +24,51 @@ export function NewEntry({ route, navigation }) {
 
   let event = null;
 
+  let openImagePickerAsync = async () => {
+    let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("Permission to access camera roll is required!");
+      return;
+    }
+
+    let pickerResult = await ImagePicker.launchImageLibraryAsync();
+    setImage(pickerResult.uri);
+  };
+
   return (
-    <Box height="100%" bg="background.800">
+    <Box height="100%" bg="background.800" w="100%">
       <Center>
-        <VStack>
+        <VStack w="100%" ml="5%" mr="5%">
           <Box height="15%" mt="5">
-            <Text color="white" fontSize="xl">
-              Name:
+            <Text ml="5%" color="white" fontSize="xl">
+              Name
             </Text>
-            <Input
-              ml="5%"
-              mr="5%"
-              color="black"
-              bg="white"
-              style={styles.input}
-              onChangeText={onChangeName}
-              value={name}
-              placeholder="Name"
-              variant="filled"
-              _focus={{ backgroundColor: "white" }}
-            />
+            <HStack alignItems={"center"}>
+              <Input
+                ml="5%"
+                mr="5%"
+                w="75%"
+                color="black"
+                bg="white"
+                style={styles.input}
+                onChangeText={onChangeName}
+                value={name}
+                placeholder="Name"
+                variant="filled"
+                _focus={{ backgroundColor: "white" }}
+              />
+              <Ionicons name="camera-outline" size={35} color="white" onPress={openImagePickerAsync} />
+            </HStack>
           </Box>
-          <Box height="65%">
+          <Box height="70%">
             <FlatList
               data={parameters}
               keyExtractor={(item) => item.id}
               renderItem={({ item, index }) => {
                 return (
-                  <Box mb="2" w="300">
-                    <Text color="white" fontSize="xl">
+                  <Box mb="2" w="100%">
+                    <Text ml="5%" color="white" fontSize="xl">
                       {item.name}
                     </Text>
                     {item.type === "text" ? (
@@ -76,71 +93,77 @@ export function NewEntry({ route, navigation }) {
                       </Box>
                     ) : item.type === "ean-8" || item.type === "ean-13" ? (
                       <Box>
-                        <Input
-                          ml="5%"
-                          mr="5%"
-                          color="black"
-                          bg="white"
-                          style={styles.input}
-                          variant="filled"
-                          _focus={{ backgroundColor: "white" }}
-                          onChangeText={(text) => {
-                            let temp = [...parameters];
-                            temp[index].value = text;
-                            setParameters(temp);
-                          }}
-                          keyboardType="numeric"
-                          value={parameters[index].value}
-                          placeholder={item.name}
-                        />
-                        <Ionicons
-                          name="barcode-outline"
-                          size={35}
-                          color="white"
-                          onPress={() => {
-                            event = DeviceEventEmitter.addListener("event.codeScanned", (eventData) =>
-                              setParametersViaEvent(eventData)
-                            );
-                            navigation.navigate("Form Scanner", {
-                              typeToScan: item.type,
-                              index: index,
-                            });
-                          }}
-                        />
+                        <HStack alignItems={"center"}>
+                          <Input
+                            ml="5%"
+                            mr="5%"
+                            w="75%"
+                            color="black"
+                            bg="white"
+                            style={styles.input}
+                            variant="filled"
+                            _focus={{ backgroundColor: "white" }}
+                            onChangeText={(text) => {
+                              let temp = [...parameters];
+                              temp[index].value = text;
+                              setParameters(temp);
+                            }}
+                            keyboardType="numeric"
+                            value={parameters[index].value}
+                            placeholder={item.name}
+                          />
+                          <Ionicons
+                            name="barcode-outline"
+                            size={35}
+                            color="white"
+                            onPress={() => {
+                              event = DeviceEventEmitter.addListener("event.codeScanned", (eventData) =>
+                                setParametersViaEvent(eventData)
+                              );
+                              navigation.navigate("Form Scanner", {
+                                typeToScan: item.type,
+                                index: index,
+                              });
+                            }}
+                          />
+                        </HStack>
                       </Box>
                     ) : item.type === "qr" ? (
                       <Box>
-                        <Input
-                          ml="5%"
-                          mr="5%"
-                          color="black"
-                          bg="white"
-                          style={styles.input}
-                          variant="filled"
-                          _focus={{ backgroundColor: "white" }}
-                          onChangeText={(text) => {
-                            let temp = [...parameters];
-                            temp[index].value = text;
-                            setParameters(temp);
-                          }}
-                          keyboardType="numeric"
-                          value={parameters[index].value}
-                          placeholder={item.name}
-                        />
-                        <Ionicons
-                          name="qr-code-outline"
-                          size={35}
-                          color="white"
-                          onPress={() => {
-                            event = DeviceEventEmitter.addListener("event.codeScanned", (eventData) =>
-                              setParametersViaEvent(eventData)
-                            );
-                            navigation.navigate("Form Scanner", {
-                              typeToScan: item.type,
-                              index: index,
-                            });
-                          }}
-                        />
+                        <HStack alignItems={"center"}>
+                          <Input
+                            ml="5%"
+                            mr="5%"
+                            w="75%"
+                            color="black"
+                            bg="white"
+                            style={styles.input}
+                            variant="filled"
+                            _focus={{ backgroundColor: "white" }}
+                            onChangeText={(text) => {
+                              let temp = [...parameters];
+                              temp[index].value = text;
+                              setParameters(temp);
+                            }}
+                            keyboardType="numeric"
+                            value={parameters[index].value}
+                            placeholder={item.name}
+                          />
+                          <Ionicons
+                            name="qr-code-outline"
+                            size={35}
+                            color="white"
+                            onPress={() => {
+                              event = DeviceEventEmitter.addListener("event.codeScanned", (eventData) =>
+                                setParametersViaEvent(eventData)
+                              );
+                              navigation.navigate("Form Scanner", {
+                                typeToScan: item.type,
+                                index: index,
+                              });
+                            }}
+                          />
+                        </HStack>
                       </Box>
                     ) : (
                       <Box>
@@ -168,8 +191,8 @@ export function NewEntry({ route, navigation }) {
               }}
             />
           </Box>
-          <Box height="15%">
-            <Button width="100%" height="12" bg="green.500" onPress={() => addNewEntryToItemGroup(name)}>
+          <Box height="10%">
+            <Button ml="5%" width="90%" height="12" bg="green.500" onPress={() => addNewEntryToItemGroup(name)}>
               Save
             </Button>
           </Box>
@@ -248,7 +271,7 @@ export function NewEntry({ route, navigation }) {
   function addNewEntryToItemGroup(name) {
     let found = categories.find((c) => c.id === choosenCategoryId);
     dispatch(nextId());
-    dispatch(addEntryToItemGroup(nextID, name, parentIds, parameters, found.icon));
+    dispatch(addEntryToItemGroup(nextID, name, parentIds, parameters, found.icon, image));
 
     let hasThreshold = false;
     let threshold = 0;

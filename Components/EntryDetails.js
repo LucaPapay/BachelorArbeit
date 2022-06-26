@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { Box, VStack, Text, Center, HStack } from "native-base";
+import { Box, VStack, Text, Center, HStack, Image } from "native-base";
 import QRCode from "react-native-qrcode-svg";
 import Barcode from "@kichiyaki/react-native-barcode-generator";
 
@@ -10,11 +10,12 @@ export function EntryDetails({ route, navigation }) {
   const TextDetails = createNumberDetails();
   const BarcodeDetails = createBarcodeDetails();
   const QRDetails = createQRDetails();
+  console.log(entry.image);
 
   return (
     <Box height="100%" bg="background.800">
       <Center>
-        <VStack mt="4">
+        <VStack mt="4" width="90%">
           {entry.parameters.map((parameter) =>
             parameter.type === "text" ? (
               <TextDetails key={parameter.id} parameter={parameter} />
@@ -27,6 +28,18 @@ export function EntryDetails({ route, navigation }) {
             ) : (
               <NumberDetails key={parameter.id} parameter={parameter} />
             )
+          )}
+          {entry.image !== "" ? (
+            <Image
+              mt="4"
+              source={{
+                uri: entry.image,
+              }}
+              alt="Alternate Text"
+              size="xl"
+            />
+          ) : (
+            <></>
           )}
         </VStack>
       </Center>

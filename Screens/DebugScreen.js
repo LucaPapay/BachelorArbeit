@@ -321,7 +321,7 @@ export function DebugScreen() {
     temp.id = 2;
     parameters.push(temp);
 
-    addEntry(19, "Tisch", [2, 5], parameters, "cube");
+    addEntry(19, "Tisch", [2, 5], parameters, "cube", "");
 
     parameters = [];
     temp = new Parameter("Amount", "number", "10");
@@ -331,13 +331,13 @@ export function DebugScreen() {
     temp.id = 2;
     parameters.push(temp);
 
-    addEntry(20, "Sessel", [2, 5], parameters, "cube");
+    addEntry(20, "Sessel", [2, 5], parameters, "cube", "");
     dispatch(addLowStockEntry("Gushaus", 20, [2, 5]));
   }
 
-  function addEntry(id, name, parentIds, parameters, icon) {
+  function addEntry(id, name, parentIds, parameters, icon, image) {
     dispatch(nextId());
-    dispatch(addEntryToItemGroup(id, name, parentIds, parameters, icon));
+    dispatch(addEntryToItemGroup(id, name, parentIds, parameters, icon, image));
   }
 
   function testAPI() {

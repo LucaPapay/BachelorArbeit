@@ -19,14 +19,14 @@ export async function importData(importedData, entries, dispatch) {
     } else {
       console.log("add " + e.name);
       dispatch(nextId());
-      dispatch(addEntryToItemGroup(e.id, e.name, e.parentIds, e.parameters, e.icon));
+      dispatch(addEntryToItemGroup(e.id, e.name, e.parentIds, e.parameters, e.icon, e.image));
     }
   });
 }
 
 function createEntryFromRow(entryObj) {
   let parameters = [];
-  let parCount = Math.floor((Object.keys(entryObj).length - 4) / 3);
+  let parCount = Math.floor((Object.keys(entryObj).length - 5) / 3);
   for (let i = 1; i <= parCount; i++) {
     let temp = new Parameter(
       entryObj["Parameter" + i + "Name"],
@@ -38,7 +38,14 @@ function createEntryFromRow(entryObj) {
   }
   let parentIds = entryObj["Parent ids"].split(",").map(Number);
 
-  return new InventoryEntry(entryObj["Name"], entryObj["Id"], parentIds, parameters, entryObj["Icon"]);
+  return new InventoryEntry(
+    entryObj["Name"],
+    entryObj["Id"],
+    parentIds,
+    parameters,
+    entryObj["Icon"],
+    entryObj["Image"]
+  );
 }
 
 function getIds(entries) {
@@ -47,13 +54,13 @@ function getIds(entries) {
 }
 
 export async function exportDataToExcel(data) {
-  let header = ["Id", "Name", "Parent ids", "Icon"];
+  let header = ["Id", "Name", "Parent ids", "Icon", "Image"];
   let output = ["Header placeholder"];
 
   let mostParameters = 0;
   data.forEach((element) => {
     let temp = toArray(element);
-    let parCount = Math.floor((temp.length - 4) / 3);
+    let parCount = Math.floor((temp.length - 5) / 3);
     if (parCount > mostParameters) {
       mostParameters = parCount;
     }
@@ -90,7 +97,7 @@ export async function exportDataToExcel(data) {
 }
 
 function toArray(element) {
-  let temp = [element.id, element.name, element.parentIds.toString(), element.icon];
+  let temp = [element.id, element.name, element.parentIds.toString(), element.icon, element.image];
   element.parameters.forEach((p) => {
     temp.push(p.name);
     temp.push(p.type);
