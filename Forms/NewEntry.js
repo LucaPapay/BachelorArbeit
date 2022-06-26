@@ -254,7 +254,7 @@ export function NewEntry({ route, navigation }) {
 
   function closeModalAndSetParameters() {
     let found = categories.find((c) => c.id === choosenCategoryId);
-    setParameters(found.parameters);
+    setParameters(JSON.parse(JSON.stringify(found.parameters)));
     setModalVisible(false);
   }
 
