@@ -1,4 +1,4 @@
-import { View, StyleSheet, TextInput } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addEntryToItemGroup,
@@ -10,10 +10,11 @@ import {
   initalState,
   nextId,
 } from "../redux/actions";
-import { Box, Button, VStack } from "native-base";
+import { Box, Button, HStack, VStack } from "native-base";
 import React, { useState } from "react";
 import { Text } from "native-base";
 import { InventoryItemGroup, Parameter } from "../Entities/DataStorage";
+import { exportDataToExcel } from "../Services/XLSXHandler";
 
 export function DebugScreen() {
   const dispatch = useDispatch();
@@ -22,31 +23,82 @@ export function DebugScreen() {
   const [title, onChangeName] = React.useState("");
   const [ean, setEan] = useState("885909128525");
 
+  let ITEMS_PER_LAYER_WIDE = 20;
+
   return (
     <Box bg="background.800" height="100%">
-      <VStack space={10} alignItems="center" mt={10}>
-        <Button onPress={() => dispatch(initalState())}>Reset</Button>
-        <Text fontSize="lg">Current ID: {counter}</Text>
-        <Button height="8" onPress={() => dispatch(nextId())}>
-          id plus
+      <VStack space={4} alignItems="center" mt={10}>
+        <Button onPress={() => dispatch(initalState())} backgroundColor="danger.500">
+          Reset
         </Button>
-        <Button onPress={() => console.log(store)}>Store</Button>
+        <HStack>
+          <Text mx="1" fontSize="lg" mt="1.5">
+            Current ID: {counter}
+          </Text>
+          <Button mx="1" onPress={() => dispatch(nextId())}>
+            id plus
+          </Button>
+        </HStack>
+        <HStack>
+          <Button mx="1" onPress={() => exportAll()}>
+            Export Store
+          </Button>
+          <Button mx="1">Import Store</Button>
+        </HStack>
+        <HStack>
+          <Button mx="1" onPress={() => console.log(store)}>
+            Store
+          </Button>
+          <Button mx="1" onPress={() => testData()}>
+            TEST Data
+          </Button>
+        </HStack>
+        <HStack>
+          <Button mx="1" onPress={() => speedTestAdd()}>
+            TEST speed
+          </Button>
+          <Button mx="1" onPress={() => speedTestWideWithoutParents()}>
+            TEST speed without Parents
+          </Button>
+        </HStack>
+
         <Button onPress={() => testAPI()}>TEST api</Button>
-        <Button onPress={() => testData()}>TEST Data</Button>
-        <Button onPress={() => speedTestAdd()}>TEST speed</Button>
-        <Button onPress={() => speedTestAddWithoutParents()}>TEST speed without Parents</Button>
         <TextInput style={styles.input} onChangeText={setEan} value={ean} placeholder="EAN / UPC / ISBN" />
         <Text>Name: {title}</Text>
       </VStack>
     </Box>
   );
 
+  function getItemList(itemGroup) {
+    let entries = [];
+    for (let i = 0; i < itemGroup.length; i++) {
+      entries = entries.concat(recurList(itemGroup[i]));
+    }
+    return entries;
+  }
+
+  function recurList(itemGroup) {
+    let entries = itemGroup.data;
+
+    for (let i = 0; i < itemGroup.subItemGroups.length; i++) {
+      entries = entries.concat(recurList(itemGroup.subItemGroups[i]));
+    }
+
+    return entries;
+  }
+
+  function exportAll() {
+    exportDataToExcel(getItemList(store.data));
+  }
+
   function speedTestAdd() {
+    let ITEMS_PER_LAYER = 3;
     const start = Date.now();
-    let ITEMS_PER_LAYER = 4;
 
     let id = 1;
     dispatch(addNewCategory(id, "Test Category", [], "cube"));
+
+    let id5 = [];
 
     for (let index = 0; index < ITEMS_PER_LAYER; index++) {
       id++;
@@ -72,7 +124,7 @@ export function DebugScreen() {
               for (let b = 0; b < ITEMS_PER_LAYER; b++) {
                 id++;
                 addSIG(id, "test " + id, id4);
-                let id5 = id4.concat(id);
+                id5 = id4.concat(id);
                 for (let c = 0; c < ITEMS_PER_LAYER; c++) {
                   id++;
                   addSIG(id, "test " + id, id5);
@@ -86,11 +138,38 @@ export function DebugScreen() {
 
     const millis = Date.now() - start;
     console.log(`seconds elapsed = ${millis / 1000}`);
+
+    addAtTheEnd(id5, id);
+  }
+
+  function addAtTheEnd(parentIds, id) {
+    const start = Date.now();
+
+    for (let c = 0; c < 10; c++) {
+      id++;
+      addSIG(id, "test " + id, parentIds);
+    }
+
+    const millis = Date.now() - start;
+    console.log(`Time to add another 10 fast = ${millis / 1000}`);
+  }
+
+  function addAtTheEndWithoutParent(parentIds, id) {
+    const start = Date.now();
+
+    for (let c = 0; c < 10; c++) {
+      id++;
+      addSIGWithoutParents(id, "test " + id, parentIds);
+    }
+
+    const millis = Date.now() - start;
+    console.log(`Time to add another 10 slow = ${millis / 1000}`);
   }
 
   function speedTestAddWithoutParents() {
+    let ITEMS_PER_LAYER = 1;
+    let id5 = [];
     const start = Date.now();
-    let ITEMS_PER_LAYER = 4;
 
     let id = 1;
     dispatch(addNewCategory(id, "Test Category", [], "cube"));
@@ -119,7 +198,7 @@ export function DebugScreen() {
               for (let b = 0; b < ITEMS_PER_LAYER; b++) {
                 id++;
                 addSIGWithoutParents(id, "test " + id, id4);
-                let id5 = id4.concat(id);
+                id5 = id4.concat(id);
                 for (let c = 0; c < ITEMS_PER_LAYER; c++) {
                   id++;
                   addSIGWithoutParents(id, "test " + id, id5);
@@ -127,6 +206,60 @@ export function DebugScreen() {
               }
             }
           }
+        }
+      }
+    }
+
+    const millis = Date.now() - start;
+    console.log(`seconds elapsed = ${millis / 1000}`);
+  }
+
+  function speedTestWide() {
+    const start = Date.now();
+    let ITEMS_PER_LAYER = ITEMS_PER_LAYER_WIDE;
+
+    let id = 1;
+    dispatch(addNewCategory(id, "Test Category", [], "cube"));
+
+    for (let index = 0; index < ITEMS_PER_LAYER; index++) {
+      id++;
+      dispatch(nextId());
+      dispatch(addItemGroupToInventories("test" + id, id));
+      let parentId = id;
+      for (let j = 0; j < ITEMS_PER_LAYER; j++) {
+        id++;
+        addSIG(id, "test " + id, [parentId]);
+        let id1 = [parentId, id];
+        for (let k = 0; k < ITEMS_PER_LAYER; k++) {
+          id++;
+          addSIG(id, "test " + id, id1);
+        }
+      }
+    }
+
+    const millis = Date.now() - start;
+    console.log(`seconds elapsed = ${millis / 1000}`);
+  }
+
+  function speedTestWideWithoutParents() {
+    const start = Date.now();
+    let ITEMS_PER_LAYER = ITEMS_PER_LAYER_WIDE;
+
+    let id = 1;
+    dispatch(addNewCategory(id, "Test Category", [], "cube"));
+
+    for (let index = 0; index < ITEMS_PER_LAYER; index++) {
+      id++;
+      dispatch(nextId());
+      dispatch(addItemGroupToInventories("test" + id, id));
+      let parentId = id;
+      for (let j = 0; j < ITEMS_PER_LAYER; j++) {
+        id++;
+        addSIGWithoutParents(id, "test " + id, [parentId]);
+        let id1 = [parentId, id];
+        for (let k = 0; k < ITEMS_PER_LAYER; k++) {
+          id++;
+          addSIGWithoutParents(id, "test " + id, id1);
         }
       }
     }
@@ -181,30 +314,30 @@ export function DebugScreen() {
     addSIG(18, "7. Stock", [2]);
 
     parameters = [];
-    temp = new Parameter("Amount", "number", 10);
+    temp = new Parameter("Amount", "number", "10");
     temp.id = 1;
     parameters.push(temp);
-    temp = new Parameter("Threshold", "number", 5);
+    temp = new Parameter("Threshold", "number", "5");
     temp.id = 2;
     parameters.push(temp);
 
-    addEntry(19, "Tisch", [2, 5], parameters, "cube");
+    addEntry(19, "Tisch", [2, 5], parameters, "cube", "");
 
     parameters = [];
-    temp = new Parameter("Amount", "number", 10);
+    temp = new Parameter("Amount", "number", "10");
     temp.id = 1;
     parameters.push(temp);
-    temp = new Parameter("Threshold", "number", 20);
+    temp = new Parameter("Threshold", "number", "20");
     temp.id = 2;
     parameters.push(temp);
 
-    addEntry(20, "Sessel", [2, 5], parameters, "cube");
+    addEntry(20, "Sessel", [2, 5], parameters, "cube", "");
     dispatch(addLowStockEntry("Gushaus", 20, [2, 5]));
   }
 
-  function addEntry(id, name, parentIds, parameters, icon) {
+  function addEntry(id, name, parentIds, parameters, icon, image) {
     dispatch(nextId());
-    dispatch(addEntryToItemGroup(id, name, parentIds, parameters, icon));
+    dispatch(addEntryToItemGroup(id, name, parentIds, parameters, icon, image));
   }
 
   function testAPI() {

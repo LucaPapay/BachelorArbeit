@@ -1,28 +1,19 @@
 import React, { useState } from "react";
-import { StyleSheet, FlatList, Modal, DeviceEventEmitter } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { addEntryToItemGroup, nextId, addLowStockEntry } from "../redux/actions";
-import { Parameter } from "../Entities/DataStorage";
-import { Picker } from "@react-native-picker/picker";
+import { StyleSheet, FlatList, DeviceEventEmitter } from "react-native";
+import { useDispatch } from "react-redux";
+import { editItemGroupEntry, addLowStockEntry } from "../redux/actions";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Input, Box, Center, VStack, Button, Text, HStack } from "native-base";
 import * as ImagePicker from "expo-image-picker";
 
-export function NewEntry({ route, navigation }) {
-  const { parentIds } = route.params;
+export function EditEntry({ route, navigation }) {
+  const { parentIds, entry } = route.params;
 
-  const [name, onChangeName] = React.useState("");
-  const [image, setImage] = React.useState("");
-  const [parameters, setParameters] = useState([]);
-  const [modalVisible, setModalVisible] = useState(true);
+  const [name, onChangeName] = React.useState(entry.name);
+  const [image, setImage] = React.useState(entry.image);
+  const [parameters, setParameters] = useState(entry.parameters);
 
   const dispatch = useDispatch();
-  let nextID = useSelector((state) => state.idCounter);
-  let categories = useSelector((state) => state.categories);
-
-  const [choosenCategoryId, setCategoryId] = useState(categories[0].id);
-
-  let event = null;
 
   let openImagePickerAsync = async () => {
     let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -36,13 +27,15 @@ export function NewEntry({ route, navigation }) {
     setImage(pickerResult.uri);
   };
 
+  let event = null;
+
   return (
     <Box height="100%" bg="background.800" w="100%">
       <Center>
         <VStack w="100%" ml="5%" mr="5%">
           <Box height="15%" mt="5">
             <Text ml="5%" color="white" fontSize="xl">
-              Name
+              Name:
             </Text>
             <HStack alignItems={"center"}>
               <Input
@@ -192,71 +185,14 @@ export function NewEntry({ route, navigation }) {
             />
           </Box>
           <Box height="10%">
-            <Button ml="5%" width="90%" height="12" bg="green.500" onPress={() => addNewEntryToItemGroup(name)}>
+            <Button ml="5%" width="90%" height="12" bg="green.500" onPress={() => saveEditedEntry(name)}>
               Save
             </Button>
           </Box>
         </VStack>
       </Center>
-      {getModal()}
     </Box>
   );
-
-  function getModal() {
-    return (
-      <Modal
-        animationType="slide"
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <Box height="100%" bg="background.800">
-          <Center>
-            <VStack mt="70">
-              <Text style={styles.header}>Choose Entry Category</Text>
-              <Box mt="50" style={styles.formLine}>
-                <Text style={styles.header}>Categories:</Text>
-                <Picker
-                  style={{ color: "white" }}
-                  selectedValue={choosenCategoryId}
-                  prompt="Item Category"
-                  onValueChange={(itemValue, itemIndex) => setCategoryId(itemValue)}
-                  itemStyle={{ color: "white" }}
-                >
-                  {categories.map((item, index) => {
-                    return <Picker.Item label={item.name} value={item.id} key={index} />;
-                  })}
-                </Picker>
-              </Box>
-              <Box>
-                <HStack>
-                  <Button
-                    width="40"
-                    height={12}
-                    marginX="1"
-                    bg="green.500"
-                    onPress={() => closeModalAndSetParameters()}
-                  >
-                    Select
-                  </Button>
-                  <Button width="40" height={12} marginX="1" onPress={() => navigation.goBack()}>
-                    Back
-                  </Button>
-                </HStack>
-              </Box>
-            </VStack>
-          </Center>
-        </Box>
-      </Modal>
-    );
-  }
-
-  function closeModalAndSetParameters() {
-    let found = categories.find((c) => c.id === choosenCategoryId);
-    setParameters(JSON.parse(JSON.stringify(found.parameters)));
-    setModalVisible(false);
-  }
 
   function setParametersViaEvent(eventData) {
     event.remove();
@@ -268,10 +204,12 @@ export function NewEntry({ route, navigation }) {
     setParameters(temp);
   }
 
-  function addNewEntryToItemGroup(name) {
-    let found = categories.find((c) => c.id === choosenCategoryId);
-    dispatch(nextId());
-    dispatch(addEntryToItemGroup(nextID, name, parentIds, parameters, found.icon, image));
+  function saveEditedEntry() {
+    entry.name = name;
+    entry.parameters = parameters;
+    entry.image = image;
+
+    dispatch(editItemGroupEntry(entry.id, entry));
 
     let hasThreshold = false;
     let threshold = 0;
@@ -289,7 +227,7 @@ export function NewEntry({ route, navigation }) {
 
     if (hasThreshold) {
       if (parseInt(amount) < parseInt(threshold)) {
-        dispatch(addLowStockEntry(name, nextID, parentIds));
+        dispatch(addLowStockEntry(name, entry.id, parentIds));
       }
     }
 

@@ -90,7 +90,8 @@ const recursiveAddInventoryEntry = (subItemGroups, parentIds, action, parentIdsC
       action.id,
       parentIdsCopy,
       action.parameters,
-      action.icon
+      action.icon,
+      action.image
     );
     return subItemGroups.map((element) =>
       element.id === parentIds[0] ? { ...element, data: element.data.concat(newInventoryEntry) } : element
@@ -111,7 +112,14 @@ const recursiveAddInventoryEntry = (subItemGroups, parentIds, action, parentIdsC
 function addNewEntryToItemGroup(state, action) {
   let parentIds = action.parentIds;
   if (parentIds.length === 1) {
-    let newEntry = new InventoryEntry(action.newEntry, action.id, action.parentIds, action.parameters, action.icon);
+    let newEntry = new InventoryEntry(
+      action.newEntry,
+      action.id,
+      action.parentIds,
+      action.parameters,
+      action.icon,
+      action.image
+    );
     return {
       ...state,
       data: state.data.map((item) => {

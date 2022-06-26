@@ -18,13 +18,14 @@ export const addItemGroupToInventories = (entry, id) => ({
   newEntry: entry,
   id: id,
 });
-export const addEntryToItemGroup = (id, entry, parentIds, parameters, icon) => ({
+export const addEntryToItemGroup = (id, entry, parentIds, parameters, icon, image) => ({
   type: ADD_TO_INVENTORIES,
   id: id,
   newEntry: entry,
   parentIds: parentIds,
   parameters: parameters,
   icon: icon,
+  image: image,
 });
 export const addSubItemGroup = (id, entry, parentIds) => ({
   type: ADD_SUB_ITEMGROUP,

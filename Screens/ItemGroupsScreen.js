@@ -4,13 +4,10 @@ import { Box, Button, Center, Text } from "native-base";
 import SubItemGroupListEntry from "../Components/SubItemGroupListEntry";
 import { Icon } from "native-base";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
 import { useDispatch } from "react-redux";
-import { addItemGroupToInventories, addNewCategory, addSubItemGroup, initalState, nextId } from "../redux/actions";
 
 export function ItemGroupsScreen({ navigation }) {
   const dispatch = useDispatch();
-  //dispatch(initalState());
   let DATA = useSelector((state) => state.data);
   let categories = useSelector((state) => state.categories);
   let hasCategories = categories.length > 0;
@@ -24,15 +21,23 @@ export function ItemGroupsScreen({ navigation }) {
               <Button
                 height="12"
                 leftIcon={<Icon as={Ionicons} name="add-circle-outline" size="lg" />}
-                size={"lg"}
+                size={"md"}
                 onPress={() => navigation.navigate("New ItemGroup")}
               >
-                ItemGroup
+                Item Group
+              </Button>
+              <Button
+                height="12"
+                leftIcon={<Icon as={Ionicons} name="list-outline" size="lg" />}
+                size={"md"}
+                onPress={() => navigation.navigate("Inventory List")}
+              >
+                List View
               </Button>
               <Button
                 height="12"
                 leftIcon={<Icon as={Ionicons} name="barcode-outline" size="lg" />}
-                size={"lg"}
+                size={"md"}
                 onPress={() => navigation.navigate("Scanner")}
               >
                 Scanner

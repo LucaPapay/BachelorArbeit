@@ -4,6 +4,7 @@ import { EntryCodeView } from "../Components/EntryCodeView";
 import { EntryDetails } from "../Components/EntryDetails";
 import { EntryEditAmountView } from "../Components/EntryEditAmountView";
 import { LowStockScreen } from "../Screens/LowStockScreen";
+import { EditEntry } from "../Forms/EditEntry";
 
 export function LowStockStackRouter() {
   const Stack = createStackNavigator();
@@ -24,6 +25,7 @@ export function LowStockStackRouter() {
         })}
       >
         <Stack.Screen name="Low Stock" component={LowStockScreen} />
+        <Stack.Screen name="Edit Entry" component={EditEntry} />
         <Stack.Screen name="QR Code" component={EntryCodeView} />
         <Stack.Screen name="Edit Amount" component={EntryEditAmountView} />
         <Stack.Screen
