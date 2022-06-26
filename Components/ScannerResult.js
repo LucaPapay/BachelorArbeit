@@ -1,9 +1,10 @@
-import { StyleSheet, View, Platform } from "react-native";
+import { StyleSheet, Platform, Modal } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import Barcode from "@kichiyaki/react-native-barcode-generator";
 import React, { useState } from "react";
-import { Text, Box, VStack, Center, Button, HStack, AlertDialog } from "native-base";
+import { Text, Box, VStack, Center, Button, HStack, AlertDialog, Spinner, Link } from "native-base";
 import Constants from "expo-constants";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function ScannerResult({ route, navigation }) {
   const { scannedResult, type } = route.params;
@@ -15,11 +16,16 @@ export default function ScannerResult({ route, navigation }) {
     trimmedType = type;
   }
 
-  const [title, onChangeTitle] = React.useState("Press Lookup to Search for Item in UPC item db");
-
   const [alertOpen, setAlertOpen] = React.useState(false);
   const cancelRef = React.useRef(null);
   const onClose = () => setAlertOpen(false);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const [title, onChangeTitle] = React.useState("Press Lookup to Search for Item in UPC item db");
+  const [description, setDescription] = React.useState("");
+  const [brand, setBrand] = React.useState("");
+  const [weight, setWeight] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
   let code = <Text>kein bild vorhanden</Text>;
   if (trimmedType === "org.iso.QRCode" || trimmedType === "256") {
@@ -43,15 +49,31 @@ export default function ScannerResult({ route, navigation }) {
               Type: {trimmedType}
             </Text>
             {code}
-            <Text mt="2">Item: {title}</Text>
-            <HStack mt="2">
-              <Button width="40" height={12} marginX="1" onPress={() => lookup()}>
-                Lookup Code on API
+            <Box h="60">
+              {loading ? (
+                <Spinner color="warning.500" size="lg" accessibilityLabel="Loading API" />
+              ) : (
+                <Text mt="2"> Item: {title}</Text>
+              )}
+            </Box>
+            {trimmedType === "org.gs1.EAN-13" ||
+            trimmedType === "32" ||
+            trimmedType === "org.gs1.EAN-8" ||
+            trimmedType === "64" ? (
+              <Button width="80" height={12} marginX="1" onPress={() => lookup()}>
+                Lookup Code on UPCitemdb
               </Button>
-              <Button width="40" height={12} marginX="1" onPress={() => gotoItem()}>
+            ) : (
+              <></>
+            )}
+
+            {trimmedType === "org.iso.QRCode" || trimmedType === "256" ? (
+              <Button mt="5" width="80" height={12} marginX="1" onPress={() => gotoItem()}>
                 Goto Item Group
               </Button>
-            </HStack>
+            ) : (
+              <></>
+            )}
           </Center>
         </VStack>
       </Box>
@@ -71,9 +93,44 @@ export default function ScannerResult({ route, navigation }) {
           </AlertDialog.Content>
         </AlertDialog>
       </Center>
+      {getModal()}
     </>
   );
 
+  function getModal() {
+    return (
+      <Modal
+        animationType="slide"
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <Box height="100%" bg="background.800">
+          <Center>
+            <VStack mt="70">
+              <HStack mb="2" justifyContent="space-between">
+                <Text fontSize="4xl">Lookup Results:</Text>
+                <Ionicons
+                  name="close-circle-outline"
+                  size={45}
+                  color="white"
+                  onPress={() => setModalVisible(!modalVisible)}
+                />
+              </HStack>
+              <Link mb="10" href={"https://www.upcitemdb.com/upc/" + scanned}>
+                View on upcitemdb website
+              </Link>
+              <Text>Name: {title}</Text>
+              <Text>Brand: {brand}</Text>
+              <Text>Weight: {weight}</Text>
+              <Text>description: {description}</Text>
+            </VStack>
+          </Center>
+        </Box>
+      </Modal>
+    );
+  }
   function gotoItem() {
     let temp = scanned;
     try {
@@ -98,15 +155,25 @@ export default function ScannerResult({ route, navigation }) {
   }
 
   function lookup() {
+    setLoading(true);
     fetch("https://api.upcitemdb.com/prod/trial/lookup?upc=" + scanned)
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
-        if (json.items && json.items.length === 0) {
+        if (
+          json.code !== "OK" ||
+          typeof json.items == "undefined" ||
+          json.items.length === 0 ||
+          typeof json.items[0] == "undefined"
+        ) {
           onChangeTitle("Item not in DB");
-        }
-        if (json.code === "OK") {
+          setLoading(false);
+        } else if (json.code === "OK") {
           onChangeTitle(json.items[0].title);
+          setDescription(json.items[0].description);
+          setBrand(json.items[0].brand);
+          setWeight(json.items[0].weight);
+          setLoading(false);
+          setModalVisible(true);
         } else {
           onChangeTitle(json.message);
         }
