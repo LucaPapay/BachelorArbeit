@@ -13,6 +13,7 @@ export function NewCategory({ route, navigation }) {
   const [parameters, setParameters] = useState([]);
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalText, setModalText] = useState("");
   const [parameterName, setParameterName] = React.useState("");
   const [parameterType, setParameterType] = React.useState("");
   const dispatch = useDispatch();
@@ -137,7 +138,15 @@ export function NewCategory({ route, navigation }) {
                     <Button marginX="1" width="25%" height={12} onPress={() => addAmount(parameters.length)}>
                       Amount
                     </Button>
-                    <Button marginX="1" width="20%" height={12} onPress={() => addParameter("Unit", "text")}>
+                    <Button
+                      marginX="1"
+                      width="20%"
+                      height={12}
+                      onPress={() => {
+                        setModalText("Unit");
+                        setModalVisible(true);
+                      }}
+                    >
                       Unit
                     </Button>
                     <Button marginX="1" width="25%" height={12} onPress={() => addParameter("EAN-8", "ean-8")}>
@@ -148,7 +157,15 @@ export function NewCategory({ route, navigation }) {
                     </Button>
                   </HStack>
                 </Center>
-                <Button mt="2" width="100%" height={12} onPress={() => setModalVisible(true)}>
+                <Button
+                  mt="2"
+                  width="100%"
+                  height={12}
+                  onPress={() => {
+                    setModalText("Parameter");
+                    setModalVisible(true);
+                  }}
+                >
                   new Parameter
                 </Button>
                 <Button width="100%" mt="2" bg="green.500" height={12} onPress={() => addNewCategoryFunction(name)}>
@@ -175,7 +192,7 @@ export function NewCategory({ route, navigation }) {
         <Box height="100%" bg="background.800">
           <Center>
             <VStack mt="70">
-              <Text fontSize="3xl">New Parameter</Text>
+              <Text fontSize="3xl">New {modalText}</Text>
               <Box mt="50" style={styles.formLine}>
                 <Text style={styles.header}>Name:</Text>
                 <Input
@@ -187,7 +204,7 @@ export function NewCategory({ route, navigation }) {
                   _focus={{ backgroundColor: "white" }}
                   onChangeText={setParameterName}
                   value={parameterName}
-                  placeholder="Parameter Name"
+                  placeholder="Name"
                 />
               </Box>
               <Box style={styles.formLine}>
@@ -195,15 +212,15 @@ export function NewCategory({ route, navigation }) {
                 <Picker
                   style={{ width: 300, marginBottom: 5, height: 50, marginTop: -10, color: "white" }}
                   selectedValue={parameterType}
-                  prompt="Parameter Type"
+                  prompt="Type"
                   onValueChange={(itemValue, itemIndex) => setParameterType(itemValue)}
                   itemStyle={{ color: "white" }}
                 >
                   <Picker.Item label="Text" value="text" />
                   <Picker.Item label="Number" value="number" />
-                  <Picker.Item label="QR Code" value="qr" />
-                  <Picker.Item label="Ean 8" value="ean-8" />
-                  <Picker.Item label="Ean 13" value="ean-13" />
+                  {modalText === "Parameter" && <Picker.Item label="QR Code" value="qr" />}
+                  {modalText === "Parameter" && <Picker.Item label="Ean 8" value="ean-8" />}
+                  {modalText === "Parameter" && <Picker.Item label="Ean 13" value="ean-13" />}
                 </Picker>
               </Box>
               <Box style={[styles.btnWrapper, { marginTop: 100 }]}>
