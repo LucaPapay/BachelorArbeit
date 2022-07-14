@@ -13,6 +13,7 @@ import {
   ADD_SUB_ITEMGROUP_WITHOUT_PARENTIDS,
   DELETE_CATEGORY,
   EDIT_CATEGORY,
+  SET_QRCODE_KEYWORD,
 } from "./types";
 import { InventoryItemGroup, InventoryEntry, Category, LowStockEntry } from "../Entities/DataStorage";
 
@@ -21,6 +22,7 @@ const initalState = {
   idCounter: 1,
   categories: [],
   lowStockEntrys: [],
+  qrcodeKeyword: "inventory",
 };
 
 function setInitial(state) {
@@ -30,6 +32,7 @@ function setInitial(state) {
     idCounter: 1,
     categories: [],
     lowStockEntrys: [],
+    qrcodeKeyword: "inventory",
   };
 }
 
@@ -330,6 +333,13 @@ function deleteEntry(state, action) {
   };
 }
 
+function setQrcodeKeyword(state, action) {
+  return {
+    ...state,
+    qrcodeKeyword: action.keyword,
+  };
+}
+
 function reducer(state = initalState, action) {
   switch (action.type) {
     case INIT:
@@ -360,6 +370,8 @@ function reducer(state = initalState, action) {
       return addSubItemGroupWithoutParentIds(state, action);
     case EDIT_CATEGORY:
       return editCategory(state, action);
+    case SET_QRCODE_KEYWORD:
+      return setQrcodeKeyword(state, action);
     default:
       return state;
   }

@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { Text, Box, VStack, Center, Button, HStack, AlertDialog, Spinner, Link } from "native-base";
 import Constants from "expo-constants";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useSelector } from "react-redux";
 
 export default function ScannerResult({ route, navigation }) {
   const { scannedResult, type } = route.params;
@@ -15,6 +16,8 @@ export default function ScannerResult({ route, navigation }) {
   } else {
     trimmedType = type;
   }
+
+  let keyword = useSelector((state) => state.qrcodeKeyword);
 
   const [alertOpen, setAlertOpen] = React.useState(false);
   const cancelRef = React.useRef(null);
@@ -139,7 +142,7 @@ export default function ScannerResult({ route, navigation }) {
       let parentIds = temp.substring(temp.search("#") + 1).split(",");
       parentIds = parentIds.map((i) => parseInt(i));
 
-      if (inventoryString !== Constants.manifest.extra.keyword || !(type === "e" || type === "i")) {
+      if (inventoryString !== keyword || !(type === "e" || type === "i")) {
         setAlertOpen(!alertOpen);
         return;
       }

@@ -1,16 +1,18 @@
-import { StyleSheet } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { Box, Center, Text, VStack } from "native-base";
-import Constants from "expo-constants";
+import { useSelector } from "react-redux";
 
 export function EntryCodeView({ route, navigation }) {
   const { name, parentIds, type } = route.params;
+
+  let keyword = useSelector((state) => state.qrcodeKeyword);
+
   let code = "";
   parentIds.forEach((element) => {
     code = code + element + ",";
   });
   code = code.slice(0, -1);
-  let displayCode = Constants.manifest.extra.keyword + "@" + type + "#" + code;
+  let displayCode = keyword + "@" + type + "#" + code;
 
   return (
     <Box height="100%" bg="background.800" style={{ flex: 1, alignItems: "center" }}>
