@@ -2,13 +2,14 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { HomeScreen } from "../Screens/HomeScreen";
 import { NewCategory } from "../Forms/NewCategory";
+import { EditCategory } from "../Forms/EditCategory";
 
 export function HomeScreenStackRouter() {
   const Stack = createStackNavigator();
   return (
     <NavigationContainer independent={true}>
       <Stack.Navigator
-        initialRouteName="New Category"
+        initialRouteName="Categories"
         screenOptions={({ route }) => ({
           headerStyle: {
             height: 80,
@@ -23,6 +24,7 @@ export function HomeScreenStackRouter() {
       >
         <Stack.Screen name="Categories" component={HomeScreen} />
         <Stack.Screen name="New Category" component={NewCategory} />
+        <Stack.Screen name="Edit Category" component={EditCategory} />
       </Stack.Navigator>
     </NavigationContainer>
   );

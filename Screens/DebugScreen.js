@@ -281,10 +281,10 @@ export function DebugScreen() {
   function testData() {
     let parameters = [];
     let temp = new Parameter("Amount", "number", "");
-    temp.id = 1;
+    temp.id = 0;
     parameters.push(temp);
     temp = new Parameter("Threshold", "number", "");
-    temp.id = 2;
+    temp.id = 1;
     parameters.push(temp);
     dispatch(nextId());
     dispatch(addNewCategory(1, "Test Category", parameters, "cube"));
@@ -315,20 +315,20 @@ export function DebugScreen() {
 
     parameters = [];
     temp = new Parameter("Amount", "number", "10");
-    temp.id = 1;
+    temp.id = 0;
     parameters.push(temp);
     temp = new Parameter("Threshold", "number", "5");
-    temp.id = 2;
+    temp.id = 1;
     parameters.push(temp);
 
     addEntry(19, "Tisch", [2, 5], parameters, "cube", "");
 
     parameters = [];
     temp = new Parameter("Amount", "number", "10");
-    temp.id = 1;
+    temp.id = 0;
     parameters.push(temp);
     temp = new Parameter("Threshold", "number", "20");
-    temp.id = 2;
+    temp.id = 1;
     parameters.push(temp);
 
     addEntry(20, "Sessel", [2, 5], parameters, "cube", "");

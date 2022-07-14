@@ -102,28 +102,37 @@ export function NewCategory({ route, navigation }) {
               keyExtractor={(item) => item.id}
               renderItem={({ item, index }) => {
                 return (
-                  <Box width="90%" mb="2">
+                  <Box mb="2">
                     <HStack alignItems="baseline" justifyContent="space-between">
                       <Text color="white" fontSize="md">
                         {item.name}
                       </Text>
-                      {item.type === "text" ? (
-                        <Text color="white" fontSize="sm">
-                          Text input
-                        </Text>
-                      ) : item.type === "ean-8" || item.type === "ean-13" ? (
-                        <Text color="white" fontSize="sm">
-                          Ean Code
-                        </Text>
-                      ) : item.type === "qr" ? (
-                        <Text color="white" fontSize="sm">
-                          QR Code
-                        </Text>
-                      ) : (
-                        <Text color="white" fontSize="sm">
-                          Numeric input
-                        </Text>
-                      )}
+                      <HStack alignItems="center">
+                        {item.type === "text" ? (
+                          <Text color="white" fontSize="sm">
+                            Text input
+                          </Text>
+                        ) : item.type === "ean-8" || item.type === "ean-13" ? (
+                          <Text color="white" fontSize="sm">
+                            Ean Code
+                          </Text>
+                        ) : item.type === "qr" ? (
+                          <Text color="white" fontSize="sm">
+                            QR Code
+                          </Text>
+                        ) : (
+                          <Text color="white" fontSize="sm">
+                            Numeric input
+                          </Text>
+                        )}
+                        <Icon
+                          as={Ionicons}
+                          color="red.600"
+                          size="2xl"
+                          name="close-outline"
+                          onPress={() => removeParameter(item)}
+                        />
+                      </HStack>
                     </HStack>
                   </Box>
                 );
@@ -249,6 +258,24 @@ export function NewCategory({ route, navigation }) {
     addParameterWithId("Threshold", "number", id + 1);
   }
 
+  function removeParameter(parameter) {
+    let names = [parameter.name];
+    if (parameter.name === "Amount" || parameter.name === "Threshold") {
+      names = ["Amount", "Threshold"];
+    }
+
+    let temp = [];
+    let parIndex = 0;
+    for (let index = 0; index < parameters.length; index++) {
+      if (!names.includes(parameters[index].name)) {
+        parameters[index].id = parIndex;
+        parIndex++;
+        temp.push(parameters[index]);
+      }
+    }
+    setParameters(temp);
+  }
+
   function addParameterWithId(name, type, id) {
     let newParameter = new Parameter(name, type, "");
     newParameter.id = id;
@@ -270,6 +297,7 @@ export function NewCategory({ route, navigation }) {
     setParameterName("");
     setParameterType("");
     setIcon("help");
+    navigation.goBack();
   }
 
   function closeModalAndAddNewParameter() {
