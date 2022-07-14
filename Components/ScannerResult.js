@@ -3,7 +3,6 @@ import QRCode from "react-native-qrcode-svg";
 import Barcode from "@kichiyaki/react-native-barcode-generator";
 import React, { useState } from "react";
 import { Text, Box, VStack, Center, Button, HStack, AlertDialog, Spinner, Link } from "native-base";
-import Constants from "expo-constants";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSelector } from "react-redux";
 
