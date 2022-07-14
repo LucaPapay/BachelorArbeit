@@ -1,26 +1,26 @@
 import React, { useState } from "react";
-import { TextInput, StyleSheet, FlatList, Modal } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { addNewCategory, nextId } from "../redux/actions";
-import { Parameter } from "../Entities/DataStorage";
+import { StyleSheet, FlatList, Modal } from "react-native";
+import { useDispatch } from "react-redux";
+import { editCategory } from "../redux/actions";
+import { Category, Parameter } from "../Entities/DataStorage";
 import { Picker } from "@react-native-picker/picker";
 import IconPicker from "react-native-icon-picker";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Input, Text, Button, Box, Icon, Center, VStack, HStack } from "native-base";
 
-export function NewCategory({ route, navigation }) {
-  const [name, onChangeName] = React.useState("");
-  const [parameters, setParameters] = useState([]);
+export function EditCategory({ route, navigation }) {
+  const { category } = route.params;
+  const [name, onChangeName] = React.useState(category.name);
+  const [parameters, setParameters] = useState(category.parameters);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalText, setModalText] = useState("");
   const [parameterName, setParameterName] = React.useState("");
   const [parameterType, setParameterType] = React.useState("");
   const dispatch = useDispatch();
-  let nextID = useSelector((state) => state.idCounter);
 
   const [showIconPicker, setShowIconPicker] = useState(false);
-  const [icon, setIcon] = useState("help");
+  const [icon, setIcon] = useState(category.icon);
 
   const onSelect = (icon) => {
     setIcon(icon.icon);
@@ -177,8 +177,8 @@ export function NewCategory({ route, navigation }) {
                 >
                   new Parameter
                 </Button>
-                <Button width="100%" mt="2" bg="green.500" height={12} onPress={() => addNewCategoryFunction(name)}>
-                  Save Category
+                <Button width="100%" mt="2" bg="green.500" height={12} onPress={() => savedEditedCategory()}>
+                  Save Edits
                 </Button>
               </VStack>
             </Center>
@@ -284,19 +284,13 @@ export function NewCategory({ route, navigation }) {
 
   function addParameter(name, type) {
     let newParameter = new Parameter(name, type, "");
-    let temp = parameters;
-    newParameter.id = temp.length;
+    newParameter.id = parameters.length;
     setParameters((parameters) => [...parameters, newParameter]);
   }
 
-  function addNewCategoryFunction(name) {
-    dispatch(nextId());
-    dispatch(addNewCategory(nextID, name, parameters, icon));
-    onChangeName("");
-    setParameters([]);
-    setParameterName("");
-    setParameterType("");
-    setIcon("help");
+  function savedEditedCategory() {
+    let edited = new Category(name, category.id, parameters, icon);
+    dispatch(editCategory(category.id, edited));
     navigation.goBack();
   }
 

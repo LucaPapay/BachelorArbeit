@@ -50,15 +50,30 @@ export function SubItemGroupScreen({ route, navigation }) {
   const SecondRoute = () => (
     <Box flex={1} mx="4" mt="4">
       <HStack w="100%">
-        <Button height="8" size={"sm"} mb="3" w="49%" mr="1" onPress={() => pickDocument()}>
+        <Button height="8" size={"sm"} mb="3" w="31%" mr="1" onPress={() => pickDocument()}>
           Import
+        </Button>
+        <Button
+          height="8"
+          ml="1"
+          mr="1"
+          size={"sm"}
+          mb="3"
+          w="33%"
+          onPress={() =>
+            navigation.navigate("New Entry Scanner", {
+              parentIds: parentIds,
+            })
+          }
+        >
+          Add via Scanner
         </Button>
         <Button
           height="8"
           ml="1"
           size={"sm"}
           mb="3"
-          w="49%"
+          w="31%"
           onPress={() => {
             exportDataToExcel(DATA.data);
           }}

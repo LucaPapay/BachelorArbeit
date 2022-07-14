@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, FlatList, DeviceEventEmitter } from "react-native";
 import { useDispatch } from "react-redux";
-import { editItemGroupEntry, addLowStockEntry } from "../redux/actions";
+import { editItemGroupEntry, addLowStockEntry, deleteEntry } from "../redux/actions";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Input, Box, Center, VStack, Button, Text, HStack } from "native-base";
 import * as ImagePicker from "expo-image-picker";

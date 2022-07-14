@@ -11,6 +11,9 @@ import {
   DELETE_ITEM_GROUP,
   DELETE_ENTRY,
   ADD_SUB_ITEMGROUP_WITHOUT_PARENTIDS,
+  DELETE_CATEGORY,
+  EDIT_CATEGORY,
+  SET_QRCODE_KEYWORD,
 } from "./types";
 import { InventoryItemGroup, InventoryEntry, Category, LowStockEntry } from "../Entities/DataStorage";
 
@@ -19,6 +22,7 @@ const initalState = {
   idCounter: 1,
   categories: [],
   lowStockEntrys: [],
+  qrcodeKeyword: "inventory",
 };
 
 function setInitial(state) {
@@ -28,6 +32,7 @@ function setInitial(state) {
     idCounter: 1,
     categories: [],
     lowStockEntrys: [],
+    qrcodeKeyword: "inventory",
   };
 }
 
@@ -79,6 +84,13 @@ function editItemGroupEntry(state, action) {
   return {
     ...state,
     data: recursiveEditInventoryEntry(state.data, parentIds, action),
+  };
+}
+
+function editCategory(state, action) {
+  return {
+    ...state,
+    categories: state.categories.map((category) => (category.id === action.id ? action.editedCategory : element)),
   };
 }
 
@@ -219,6 +231,13 @@ function deleteLowStockEntry(state, action) {
   };
 }
 
+function deleteCategory(state, action) {
+  return {
+    ...state,
+    categories: state.categories.filter((e) => e.id !== action.id),
+  };
+}
+
 const recursiveDeleteSubItemGroup = (subItemGroups, parentIds, id) => {
   //found parent
   if (parentIds.length === 0) {
@@ -314,6 +333,13 @@ function deleteEntry(state, action) {
   };
 }
 
+function setQrcodeKeyword(state, action) {
+  return {
+    ...state,
+    qrcodeKeyword: action.keyword,
+  };
+}
+
 function reducer(state = initalState, action) {
   switch (action.type) {
     case INIT:
@@ -338,8 +364,14 @@ function reducer(state = initalState, action) {
       return deleteItemGroup(state, action);
     case DELETE_ENTRY:
       return deleteEntry(state, action);
+    case DELETE_CATEGORY:
+      return deleteCategory(state, action);
     case ADD_SUB_ITEMGROUP_WITHOUT_PARENTIDS:
       return addSubItemGroupWithoutParentIds(state, action);
+    case EDIT_CATEGORY:
+      return editCategory(state, action);
+    case SET_QRCODE_KEYWORD:
+      return setQrcodeKeyword(state, action);
     default:
       return state;
   }

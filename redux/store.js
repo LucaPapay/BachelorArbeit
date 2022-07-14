@@ -16,6 +16,7 @@ let initalState = {
   idCounter: 1,
   categories: [],
   lowStockEntrys: [],
+  qrcodeKeyword: "inventory",
 };
 
 export const store = createStore(persistedReducer, initalState);

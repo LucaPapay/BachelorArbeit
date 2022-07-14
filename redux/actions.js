@@ -11,6 +11,9 @@ import {
   DELETE_ITEM_GROUP,
   DELETE_ENTRY,
   ADD_SUB_ITEMGROUP_WITHOUT_PARENTIDS,
+  DELETE_CATEGORY,
+  EDIT_CATEGORY,
+  SET_QRCODE_KEYWORD,
 } from "./types";
 
 export const addItemGroupToInventories = (entry, id) => ({
@@ -72,6 +75,22 @@ export const deleteEntry = (id, parentIds) => ({
   type: DELETE_ENTRY,
   id: id,
   parentIds: parentIds,
+});
+
+export const deleteCategory = (id) => ({
+  type: DELETE_CATEGORY,
+  id: id,
+});
+
+export const editCategory = (id, editedCategory) => ({
+  type: EDIT_CATEGORY,
+  id: id,
+  editedCategory: editedCategory,
+});
+
+export const setQrcodeKeyword = (keyword) => ({
+  type: SET_QRCODE_KEYWORD,
+  keyword: keyword,
 });
 
 export const initalState = () => ({ type: INIT });

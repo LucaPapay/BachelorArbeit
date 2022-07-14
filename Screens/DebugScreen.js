@@ -9,8 +9,9 @@ import {
   addSubItemGroupWithoutParentIds,
   initalState,
   nextId,
+  setQrcodeKeyword,
 } from "../redux/actions";
-import { Box, Button, HStack, VStack } from "native-base";
+import { Box, Button, HStack, VStack, Input } from "native-base";
 import React, { useState } from "react";
 import { Text } from "native-base";
 import { InventoryItemGroup, Parameter } from "../Entities/DataStorage";
@@ -22,31 +23,68 @@ export function DebugScreen() {
   let store = useSelector((state) => state);
   const [title, onChangeName] = React.useState("");
   const [ean, setEan] = useState("885909128525");
+  const [keyword, setKeyword] = React.useState(useSelector((state) => state.qrcodeKeyword));
 
   let ITEMS_PER_LAYER_WIDE = 20;
 
   return (
     <Box bg="background.800" height="100%">
-      <VStack space={4} alignItems="center" mt={10}>
-        <Button onPress={() => dispatch(initalState())} backgroundColor="danger.500">
+      <VStack space={4} alignItems="flex-start" ml="10" mt={10}>
+        <Box width="70%">
+          <Text color="white" fontSize="xl">
+            Internal QR-Code Prefix
+          </Text>
+          <HStack>
+            <Input
+              mr="5%"
+              w="80%"
+              color="black"
+              bg="white"
+              style={styles.input}
+              onChangeText={setKeyword}
+              value={keyword}
+              placeholder="Keyword"
+              variant="filled"
+              _focus={{ backgroundColor: "white" }}
+            />
+            <Button
+              _pressed={{ transform: [{ scale: 0.95 }] }}
+              w="20"
+              onPress={() => setInternalQrKeyword()}
+              backgroundColor="green.500"
+            >
+              Save
+            </Button>
+          </HStack>
+        </Box>
+        <Text color="white" fontSize="xl" mt="5" mb="1.5" w="70%">
+          Debug Options
+        </Text>
+        <Button
+          _pressed={{ transform: [{ scale: 0.95 }] }}
+          onPress={() => dispatch(initalState())}
+          backgroundColor="danger.500"
+        >
           Reset
         </Button>
         <HStack>
           <Text mx="1" fontSize="lg" mt="1.5">
             Current ID: {counter}
           </Text>
-          <Button mx="1" onPress={() => dispatch(nextId())}>
+          <Button _pressed={{ transform: [{ scale: 0.95 }] }} mx="1" onPress={() => dispatch(nextId())}>
             id plus
           </Button>
         </HStack>
         <HStack>
-          <Button mx="1" onPress={() => exportAll()}>
+          <Button _pressed={{ transform: [{ scale: 0.95 }] }} mx="1" onPress={() => exportAll()}>
             Export Store
           </Button>
-          <Button mx="1">Import Store</Button>
+          <Button _pressed={{ transform: [{ scale: 0.95 }] }} mx="1">
+            Import Store
+          </Button>
         </HStack>
         <HStack>
-          <Button mx="1" onPress={() => console.log(store)}>
+          <Button _pressed={{ transform: [{ scale: 0.95 }] }} w="20" mx="1" onPress={() => console.log(store)}>
             Store
           </Button>
           <Button mx="1" onPress={() => testData()}>
@@ -54,20 +92,38 @@ export function DebugScreen() {
           </Button>
         </HStack>
         <HStack>
-          <Button mx="1" onPress={() => speedTestAdd()}>
+          <Button _pressed={{ transform: [{ scale: 0.95 }] }} mx="1" onPress={() => speedTestAdd()}>
             TEST speed
           </Button>
-          <Button mx="1" onPress={() => speedTestWideWithoutParents()}>
+          <Button _pressed={{ transform: [{ scale: 0.95 }] }} mx="1" onPress={() => speedTestWideWithoutParents()}>
             TEST speed without Parents
           </Button>
         </HStack>
-
-        <Button onPress={() => testAPI()}>TEST api</Button>
-        <TextInput style={styles.input} onChangeText={setEan} value={ean} placeholder="EAN / UPC / ISBN" />
+        <HStack>
+          <Input
+            mr="5%"
+            w="55%"
+            color="black"
+            bg="white"
+            style={styles.input}
+            onChangeText={setEan}
+            value={ean}
+            placeholder="EAN / UPC / ISBN"
+            variant="filled"
+            _focus={{ backgroundColor: "white" }}
+          />
+          <Button _pressed={{ transform: [{ scale: 0.95 }] }} w="20" onPress={() => testAPI()}>
+            TEST api
+          </Button>
+        </HStack>
         <Text>Name: {title}</Text>
       </VStack>
     </Box>
   );
+
+  function setInternalQrKeyword() {
+    dispatch(setQrcodeKeyword(keyword));
+  }
 
   function getItemList(itemGroup) {
     let entries = [];
@@ -279,12 +335,13 @@ export function DebugScreen() {
   }
 
   function testData() {
+    dispatch(initalState());
     let parameters = [];
     let temp = new Parameter("Amount", "number", "");
-    temp.id = 1;
+    temp.id = 0;
     parameters.push(temp);
     temp = new Parameter("Threshold", "number", "");
-    temp.id = 2;
+    temp.id = 1;
     parameters.push(temp);
     dispatch(nextId());
     dispatch(addNewCategory(1, "Test Category", parameters, "cube"));
@@ -315,20 +372,20 @@ export function DebugScreen() {
 
     parameters = [];
     temp = new Parameter("Amount", "number", "10");
-    temp.id = 1;
+    temp.id = 0;
     parameters.push(temp);
     temp = new Parameter("Threshold", "number", "5");
-    temp.id = 2;
+    temp.id = 1;
     parameters.push(temp);
 
     addEntry(19, "Tisch", [2, 5], parameters, "cube", "");
 
     parameters = [];
     temp = new Parameter("Amount", "number", "10");
-    temp.id = 1;
+    temp.id = 0;
     parameters.push(temp);
     temp = new Parameter("Threshold", "number", "20");
-    temp.id = 2;
+    temp.id = 1;
     parameters.push(temp);
 
     addEntry(20, "Sessel", [2, 5], parameters, "cube", "");
